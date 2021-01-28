@@ -4,6 +4,7 @@ import Home from '@/page/Home'
 import Rank from '@/page/Rank'
 import User from '@/page/User'
 import Publish from '@/page/Publish'
+import Login from '@/page/Login'
 
 Vue.use(Router)
 
@@ -22,14 +23,17 @@ export default new Router({
     {
       path: '/user',
       name: 'User',
-      component: User,
-      children: [
-        {
-          path: '/user/publish',
-          name: 'Publish',
-          component: Publish
-        }
-      ]
+      component: User
+    },
+    {
+      path: '/publish',
+      name: 'Publish',
+      component: Publish
+    },
+    {
+      path: '/login',
+      name: 'Login',
+      component: Login
     }
   ]
 })
