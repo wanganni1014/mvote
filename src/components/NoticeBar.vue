@@ -16,8 +16,3 @@ export default {
   name: 'NoticeBar'
 }
 </script>
-<style scope>
-    .notice-wrap{
-        margin: 10px 0;
-    }
-</style>
