@@ -10,7 +10,8 @@
         >{{ sort }}</span
       >
     </div>
-    <div class="rank-title">仅显示前100名</div>
+    <empty description="暂时还没有参赛作品" image="search" v-if="!list.length" />
+    <div class="rank-title" v-else>仅显示前100名</div>
     <van-list
       class="list-content"
       v-model="loading"
@@ -20,7 +21,11 @@
     >
       <div class="rank-item" v-for="(user, index) in list" :key="'rank' + index">
         <span class="index">{{ index + 1 }}</span>
-        <img class="avatar" src="" alt="" />
+        <img
+          class="avatar"
+          src="https://weiliicimg9.pstatp.com/weili/l/1060456631215325195.webp"
+          alt=""
+        />
         <span class="order">123</span>
         <span class="name">哈哈哈哈</span>
         <span class="piao">123123</span>
@@ -58,7 +63,7 @@ export default {
           this.list.push(this.list.length + 1);
         }
         this.loading = false;
-        if (this.list.length >= 40) {
+        if (this.list.length >= 100) {
           this.finished = true;
         }
       }, 1000);
@@ -99,7 +104,7 @@ export default {
 }
 
 .sort-item-select {
-  background-color: rgb(233, 181, 85);
+  background-color: rgb(230, 147, 47);
   color: white;
 }
 
