@@ -18,7 +18,7 @@
         <empty description="暂时还没有参赛作品" image="search" v-if="!list.length"/>
         <!-- <van-cell v-else v-for="item in list" :key="item" :title="item" /> -->
         <van-grid :gutter="10" :border="false" :column-num="2">
-            <van-grid-item v-for="(item, index) in list" :key="index">
+            <van-grid-item v-for="(item, index) in list" :key="index" @click="toPublish">
                 <!-- <video src="https://media.w3.org/2010/05/sintel/trailer.mp4"></video> -->
                 <div class="custom-grid-item">
                     <img src="https://weiliicimg9.pstatp.com/weili/l/1060456631215325195.webp" alt="">
@@ -76,6 +76,9 @@ export default {
           this.finished = true
         }
       }, 1000)
+    },
+    toPublish () {
+      this.$router.push('/publish')
     }
   }
 }

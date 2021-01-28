@@ -22,7 +22,7 @@
             :rules="[{ required: true, message: '请输入验证码' }]"
         >
         <template #button>
-            <van-button size="small" type="info" :disabled="text !== '发送验证码'" @click="sendCode" class="code-btn">{{text}}</van-button>
+            <van-button size="small" type="info" :disabled="text !== '发送验证码'" @click="sendCode" class="code-btn" native-type="button">{{text}}</van-button>
         </template>
         </van-field>
         <div style="margin: 50px 16px 0 16px;">

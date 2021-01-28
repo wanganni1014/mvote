@@ -3,10 +3,10 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import { Button, PullRefresh, Toast, List, Cell, Field, Form } from 'vant'
+import { Button, PullRefresh, Toast, List, Cell, Field, Form, Slider, Popup, Picker } from 'vant'
 
 Vue.config.productionTip = false
-Vue.use(Button).use(PullRefresh).use(List).use(Cell).use(Field).use(Form).use(Toast)
+Vue.use(Button).use(PullRefresh).use(List).use(Cell).use(Field).use(Form).use(Slider).use(Picker).use(Popup).use(Toast)
 
 /* eslint-disable no-new */
 new Vue({

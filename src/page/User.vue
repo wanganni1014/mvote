@@ -1,6 +1,6 @@
 <template>
   <div>
-    <van-empty description="您还没有登录">
+    <van-empty description="您还没有登陆哦~">
         <van-button round type="danger" class="bottom-button" @click="toLogin">去登陆</van-button>
     </van-empty>
     <Tabbar />
