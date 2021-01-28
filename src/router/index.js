@@ -10,35 +10,35 @@ import Audit from '@/page/Audit'
 Vue.use(Router)
 
 export default new Router({
-    routes: [{
-            path: '/',
-            name: 'Home',
-            component: Home
-        },
-        {
-            path: '/rank',
-            name: 'Rank',
-            component: Rank
-        },
-        {
-            path: '/user',
-            name: 'User',
-            component: User
-        },
-        {
-            path: '/publish',
-            name: 'Publish',
-            component: Publish
-        },
-        {
-            path: '/login',
-            name: 'Login',
-            component: Login
-        },
-        {
-            path: '/audit',
-            name: 'Audit',
-            component: Audit
-        }
-    ]
+  routes: [{
+    path: '/',
+    name: 'Home',
+    component: Home
+  },
+  {
+    path: '/rank',
+    name: 'Rank',
+    component: Rank
+  },
+  {
+    path: '/user',
+    name: 'User',
+    component: User
+  },
+  {
+    path: '/publish',
+    name: 'Publish',
+    component: Publish
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login
+  },
+  {
+    path: '/audit',
+    name: 'Audit',
+    component: Audit
+  }
+  ]
 })

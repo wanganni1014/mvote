@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="audit-wrap">
     <empty description="暂时还没有作品审核" image="search" v-if="!list || !list.length" />
     <van-list
       class="list-content"
@@ -25,39 +25,40 @@
 </template>
 
 <script>
-import Empty from "@/components/Empty.vue";
-import Vue from "vue";
-// import { Cell, CellGroup } from "vant";
+import Empty from '@/components/Empty.vue'
 export default {
-  name: "Audit",
+  name: 'Audit',
   components: { Empty },
-  data() {
+  data () {
     return {
       list: [],
       loading: false,
-      finished: false,
-    };
+      finished: false
+    }
   },
   methods: {
-    onLoad() {
+    onLoad () {
       setTimeout(() => {
         for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
+          this.list.push(this.list.length + 1)
         }
-        this.loading = false;
+        this.loading = false
         if (this.list.length >= 100) {
-          this.finished = true;
+          this.finished = true
         }
-      }, 1000);
+      }, 1000)
     },
 
-    onAuditItemBtnTap(e) {
-      console.log(e);
-    },
-  },
-};
+    onAuditItemBtnTap (e) {
+      console.log(e)
+    }
+  }
+}
 </script>
 <style>
+.audit-wrap{
+  background-color: #f7f7f7;
+}
 .audit-item {
   display: flex;
   justify-content: space-between;
