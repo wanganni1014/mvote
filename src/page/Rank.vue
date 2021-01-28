@@ -12,6 +12,7 @@
     </div>
     <div class="rank-title">仅显示前100名</div>
     <van-list
+      class="list-content"
       v-model="loading"
       :finished="finished"
       finished-text="没有更多了"
@@ -42,16 +43,26 @@ export default {
   components: { Tabbar },
   data() {
     return {
-      list: [1, 1, 1, 1, 1, 1],
+      list: [],
       sortIndex: 0,
       sorts: ["全部", "广播体操", "武术", "健身操", "仰卧起坐", "太极拳", "跳绳"],
       loading: false,
-      finished: true,
+      finished: false,
     };
   },
 
   methods: {
-    onLoad() {},
+    onLoad() {
+      setTimeout(() => {
+        for (let i = 0; i < 10; i++) {
+          this.list.push(this.list.length + 1);
+        }
+        this.loading = false;
+        if (this.list.length >= 40) {
+          this.finished = true;
+        }
+      }, 1000);
+    },
 
     onSortItemTap(index) {
       if (this.sortIndex != index) {
@@ -84,6 +95,7 @@ export default {
   color: #888;
   border-radius: 3px;
   margin-left: 6px;
+  margin-top: 6px;
 }
 
 .sort-item-select {
@@ -94,6 +106,10 @@ export default {
 .rank-title {
   padding: 15px 0;
   color: #666;
+}
+
+.list-content {
+  padding-bottom: 50px;
 }
 .rank-item {
   width: 100%;
