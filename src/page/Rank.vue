@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="rank-wrap">
     <div class="sort-bg">
       <span
         class="sort-item"
@@ -20,14 +20,16 @@
       @load="onLoad"
     >
       <div class="rank-item" v-for="(user, index) in list" :key="'rank' + index">
-        <span class="index">{{ index + 1 }}</span>
-        <img
-          class="avatar"
-          src="https://weiliicimg9.pstatp.com/weili/l/1060456631215325195.webp"
-          alt=""
-        />
-        <span class="order">123</span>
-        <span class="name">哈哈哈哈</span>
+        <div class="rank-item-info">
+            <span class="index">{{ index + 1 }}</span>
+            <img
+            class="avatar"
+            src="https://weiliicimg9.pstatp.com/weili/l/1060456631215325195.webp"
+            alt=""
+            />
+            <span class="order">哈哈哈哈</span>
+        </div>
+        <!-- <span class="name">哈哈哈哈</span> -->
         <span class="piao">123123</span>
       </div>
     </van-list>
@@ -37,6 +39,7 @@
 
 <script>
 import Tabbar from '@/components/Tabbar.vue'
+import Empty from '@/components/Empty.vue'
 import Vue from 'vue'
 import { Cell, CellGroup } from 'vant'
 
@@ -45,7 +48,7 @@ Vue.use(CellGroup)
 
 export default {
   name: 'Rank',
-  components: { Tabbar },
+  components: { Tabbar, Empty },
   data () {
     return {
       list: [],
@@ -79,6 +82,10 @@ export default {
 </script>
 
 <style>
+.rank-wrap{
+    background-color: white;
+    height: 100vh;
+}
 .sort-bg {
   width: 100%;
   padding: 10px 14px 0 8px;
@@ -118,7 +125,7 @@ export default {
 }
 .rank-item {
   width: 100%;
-  padding: 18px 14px;
+  padding: 18px 14px 18px 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -126,6 +133,12 @@ export default {
   align-items: center;
   align-content: center;
   border-top: solid 1px #dfdfdf;
+}
+
+.rank-item-info{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
 }
 .rank-item .index {
   width: 50px;
