@@ -1,12 +1,24 @@
 <template>
   <div id="app">
+    <van-nav-bar
+      title="投票大赛"
+      left-text="返回"
+      left-arrow
+      @click-left="onClickLeft"
+      @click-right="onClickRight"
+    />
     <router-view/>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'App'
+  name: 'App',
+  methods: {
+    onClickLeft () {
+      this.$router.goBack()
+    }
+  }
 }
 </script>
 
