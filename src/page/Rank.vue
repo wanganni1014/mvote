@@ -38,47 +38,47 @@
 </template>
 
 <script>
-import Tabbar from "@/components/Tabbar.vue";
-import Empty from "@/components/Empty.vue";
-import Vue from "vue";
-import { Cell, CellGroup } from "vant";
+import Tabbar from '@/components/Tabbar.vue'
+import Empty from '@/components/Empty.vue'
+import Vue from 'vue'
+import { Cell, CellGroup } from 'vant'
 
-Vue.use(Cell);
-Vue.use(CellGroup);
+Vue.use(Cell)
+Vue.use(CellGroup)
 
 export default {
-  name: "Rank",
+  name: 'Rank',
   components: { Tabbar, Empty },
-  data() {
+  data () {
     return {
       list: [],
       sortIndex: 0,
-      sorts: ["全部", "广播体操", "武术", "健身操", "仰卧起坐", "太极拳", "跳绳"],
+      sorts: ['全部', '广播体操', '武术', '健身操', '仰卧起坐', '太极拳', '跳绳'],
       loading: false,
-      finished: false,
-    };
+      finished: false
+    }
   },
 
   methods: {
-    onLoad() {
+    onLoad () {
       setTimeout(() => {
         for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1);
+          this.list.push(this.list.length + 1)
         }
-        this.loading = false;
+        this.loading = false
         if (this.list.length >= 100) {
-          this.finished = true;
+          this.finished = true
         }
-      }, 1000);
+      }, 1000)
     },
 
-    onSortItemTap(index) {
+    onSortItemTap (index) {
       if (this.sortIndex !== index) {
-        this.sortIndex = index;
+        this.sortIndex = index
       }
-    },
-  },
-};
+    }
+  }
+}
 </script>
 
 <style>

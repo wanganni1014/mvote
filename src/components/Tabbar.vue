@@ -2,7 +2,8 @@
   <div>
     <van-tabbar route>
         <van-tabbar-item replace to="/"  icon="home-o">首页</van-tabbar-item>
-        <van-tabbar-item replace to="/rank"  icon="friends-o">排名</van-tabbar-item>
+        <van-tabbar-item replace to="/search"  icon="search">搜索</van-tabbar-item>
+        <van-tabbar-item replace to="/rank"  icon="bar-chart-o">排名</van-tabbar-item>
         <van-tabbar-item replace to="/user"  icon="setting-o">个人中心</van-tabbar-item>
     </van-tabbar>
   </div>

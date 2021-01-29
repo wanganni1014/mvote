@@ -6,6 +6,7 @@ import User from '@/page/User'
 import Publish from '@/page/Publish'
 import Login from '@/page/Login'
 import Audit from '@/page/Audit'
+import Search from '@/page/Search'
 
 Vue.use(Router)
 
@@ -24,6 +25,11 @@ export default new Router({
     path: '/user',
     name: 'User',
     component: User
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: Search
   },
   {
     path: '/publish',
