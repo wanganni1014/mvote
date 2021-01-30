@@ -1,5 +1,13 @@
 <template>
   <div class="publish-wrap">
+    <van-sticky class="sticky">
+        <van-nav-bar
+      title="报名参赛"
+      left-text="返回"
+      left-arrow
+      @click-left="onClickLeft"
+    />
+    </van-sticky>
     <div class="form-wrap">
          <van-form @submit="onSubmit" validate-trigger="onSubmit">
         <van-field
@@ -40,7 +48,7 @@
             @click="showPicker = true"
             :rules="[{ required: true, message: '请选择参赛项目' }]"
             />
-            <van-popup v-model="showPicker" position="bottom">
+            <van-popup v-model="showPicker" round position="bottom">
                 <van-picker
                     show-toolbar
                     :columns="columns"
@@ -91,15 +99,52 @@ export default {
         idCard: [],
         video: []
       },
-      columns: ['项目一', '项目二', '项目三', '项目四', '项目五'],
+      columns: [
+        {
+          text: '第九套广播体操',
+          children: []
+        },
+        {
+          text: '深蹲起',
+          children: [
+            {
+              text: '成人组'
+            },
+            {
+              text: '青少年组'
+            }
+          ]
+        },
+        {
+          text: '跳绳',
+          children: [
+            {
+              text: '青少年组（男子）'
+            },
+            {
+              text: '成人组（男子）'
+            },
+            {
+              text: '青少年组（女子）'
+            },
+            {
+              text: '成人组（女子）'
+            }
+          ]
+        }
+      ],
       showPicker: false
     }
   },
   methods: {
+    onClickLeft () {
+      this.$router.go(-1)
+    },
     onSubmit (values) {
       console.log('submit', values)
     },
     onConfirm (value) {
+      console.log(value)
       this.value = value
       this.showPicker = false
     }

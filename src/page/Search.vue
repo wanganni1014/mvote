@@ -7,6 +7,26 @@
             background="#1989Fa"
             placeholder="请输入搜索关键词"
             />
+            <van-field
+              v-model="fieldValue"
+              is-link
+              readonly
+              label="组别"
+              placeholder="请选择组别"
+              @click="show = true"
+            />
+            <van-popup v-model="show" round position="bottom">
+              <van-cascader
+               active-color="#1989fa"
+                v-model="pickerValue"
+                title="请选择组别"
+                :options="options"
+                :field-names="fieldNames"
+                @close="show = false"
+                @change="onChange"
+                @finish="onFinish"
+              />
+            </van-popup>
     </van-sticky>
     <van-list
         v-model="loading"
@@ -60,7 +80,32 @@ export default {
       ],
       list: [],
       loading: false,
-      finished: false
+      finished: false,
+      value: '',
+      fieldNames: {
+        text: 'name',
+        value: 'code',
+        children: 'items'
+      },
+      options: [
+        {
+          name: '第九套广播体操',
+          code: '330000'
+        },
+        {
+          name: '深蹲起',
+          code: '320001',
+          items: [{ name: '成人组', code: '3201001' }, { name: '青少年组', code: '3201002' }]
+        },
+        {
+          name: '跳绳',
+          code: '320002',
+          items: [{ name: '青少年组（男子）', code: '320100' }, { name: '成人组（男子）', code: '320101' }, { name: '青少年组（女子）', code: '320122' }, { name: '成人组（女子）', code: '320123' }]
+        }
+      ],
+      show: false,
+      fieldValue: '',
+      pickerValue: ''
     }
   },
   methods: {
@@ -75,10 +120,17 @@ export default {
         if (this.list.length >= 40) {
           this.finished = true
         }
-      }, 1000)
+      }, 300)
     },
     toPublish () {
       this.$router.push('/publish')
+    },
+    onChange () {
+      console.log('change 啦')
+    },
+    onFinish ({ selectedOptions }) {
+      this.show = false
+      this.fieldValue = selectedOptions.map((option) => option.name).join('/')
     }
   }
 }

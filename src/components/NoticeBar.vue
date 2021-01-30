@@ -3,7 +3,7 @@
     <van-notice-bar
         left-icon="volume-o"
         scrollable
-        text="全球萌娃大赛来袭,快来参与吧"
+        text='2021年新疆第一季云健身“运动汇”火热报名中'
     />
   </div>
 </template>

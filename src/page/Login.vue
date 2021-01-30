@@ -1,5 +1,13 @@
 <template>
   <div>
+    <van-sticky class="sticky">
+        <van-nav-bar
+      title="投票大赛"
+      left-text="返回"
+      left-arrow
+      @click-left="onClickLeft"
+    />
+    </van-sticky>
       <div class="login-wrap"></div>
       <van-form @submit="onSubmit" validate-trigger="onSubmit">
         <van-field
@@ -45,6 +53,9 @@ export default {
     }
   },
   methods: {
+    onClickLeft () {
+      this.$router.go(-1)
+    },
     sendCode () {
       timer = setInterval(() => {
         if (count > 0) {
@@ -55,7 +66,7 @@ export default {
           this.text = '发送验证码'
           clearInterval(timer)
         }
-      }, 1000)
+      }, 300)
     },
     onSubmit (values) {
       console.log('submit', values)

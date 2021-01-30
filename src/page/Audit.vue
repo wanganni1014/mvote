@@ -46,7 +46,7 @@ export default {
         if (this.list.length >= 100) {
           this.finished = true
         }
-      }, 1000)
+      }, 300)
     },
 
     onAuditItemBtnTap (e) {

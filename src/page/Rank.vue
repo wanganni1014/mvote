@@ -1,15 +1,29 @@
 <template>
   <div class="rank-wrap">
+    <van-sticky class="sticky">
     <div class="sort-bg">
-      <span
-        class="sort-item"
-        :class="sortIndex == index ? 'sort-item-select' : ''"
-        v-for="(sort, index) in sorts"
-        :key="'sort' + index"
-        @click.stop="onSortItemTap(index)"
-        >{{ sort }}</span
-      >
-    </div>
+        <span>一级组：</span>
+        <span
+          class="sort-item"
+          :class="sortIndex == index ? 'sort-item-select' : ''"
+          v-for="(sort, index) in sorts"
+          :key="'sort' + index"
+          @click.stop="onSortItemTap(index)"
+          >{{ sort }}</span
+        >
+      </div>
+      <div class="sort-bg">
+        <span>二级组：</span>
+        <span
+          class="sort-item"
+          :class="sortIndex == index ? 'sort-item-select' : ''"
+          v-for="(sort, index) in sorts2"
+          :key="'sort' + index"
+          @click.stop="onSortItemTap(index)"
+          >{{ sort }}</span
+        >
+      </div>
+    </van-sticky>
     <empty description="暂时还没有参赛作品" image="search" v-if="!list.length" />
     <div class="rank-title" v-else>仅显示前100名</div>
     <van-list
@@ -54,6 +68,7 @@ export default {
       list: [],
       sortIndex: 0,
       sorts: ['全部', '广播体操', '武术', '健身操', '仰卧起坐', '太极拳', '跳绳'],
+      sorts2: ['全部', '男子组', '女子组'],
       loading: false,
       finished: false
     }
@@ -69,7 +84,7 @@ export default {
         if (this.list.length >= 100) {
           this.finished = true
         }
-      }, 1000)
+      }, 300)
     },
 
     onSortItemTap (index) {
@@ -85,6 +100,10 @@ export default {
 .rank-wrap {
   background-color: white;
   height: 100vh;
+}
+.van-sticky{
+  background-color: white;
+  padding-bottom: 10px;
 }
 .sort-bg {
   width: 100%;

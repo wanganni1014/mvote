@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import Poster from '@/page/Poster'
 import Home from '@/page/Home'
 import Rank from '@/page/Rank'
 import User from '@/page/User'
@@ -13,6 +14,11 @@ Vue.use(Router)
 export default new Router({
   routes: [{
     path: '/',
+    name: 'Poster',
+    component: Poster
+  },
+  {
+    path: '/index',
     name: 'Home',
     component: Home
   },
