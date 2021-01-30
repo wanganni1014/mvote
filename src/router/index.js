@@ -8,6 +8,7 @@ import Publish from '@/page/Publish'
 import Login from '@/page/Login'
 import Audit from '@/page/Audit'
 import Search from '@/page/Search'
+import Detail from '@/page/Detail'
 
 Vue.use(Router)
 
@@ -21,6 +22,11 @@ export default new Router({
     path: '/index',
     name: 'Home',
     component: Home
+  },
+  {
+    path: '/detail',
+    name: 'Detail',
+    component: Detail
   },
   {
     path: '/rank',

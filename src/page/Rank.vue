@@ -137,6 +137,7 @@ export default {
 .rank-title {
   padding: 15px 0;
   color: #666;
+  text-align: center;
 }
 
 .list-content {
@@ -144,6 +145,7 @@ export default {
 }
 .rank-item {
   width: 100%;
+  text-align: center;
   padding: 18px 14px 18px 0;
   box-sizing: border-box;
   display: flex;

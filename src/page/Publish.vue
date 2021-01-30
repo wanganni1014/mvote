@@ -28,6 +28,15 @@
             :rules="[{ required: true, message: '请输入联系方式' }]"
         />
         <van-field
+            v-model="form.age"
+            name="age"
+            type="tel"
+            label="年龄"
+            clearable
+            placeholder="请输入年龄"
+            :rules="[{ required: true, message: '请输入年龄' }]"
+        />
+        <!-- <van-field
             name="age"
             label="年龄">
             <template #input>
@@ -37,7 +46,7 @@
                     </template>
                 </van-slider>
             </template>
-        </van-field>
+        </van-field> -->
         <van-field
             readonly
             clickable
@@ -62,6 +71,9 @@
             label="家庭住址"
             clearable
             placeholder="请输入详细的家庭住址"
+            rows="1"
+            autosize
+            type="textarea"
             :rules="[{ required: true, message: '请输入家庭住址' }]"
         />
         <van-field name="idCard" label="身份证" :rules="[{ required: true, message: '请上传身份证照片' }]">
@@ -74,7 +86,18 @@
                 <van-uploader v-model="form.video" />
             </template>
         </van-field>
-        <div style="margin: 50px 16px 0 16px;">
+        <van-field
+            v-model="form.message"
+            name="remark"
+            label="参赛宣言"
+            rows="1"
+            autosize
+            type="textarea"
+            clearable
+            placeholder="请输入您的参赛宣言"
+            :rules="[{ required: true, message: '请输入参赛宣言' }]"
+        />
+        <div style="margin: 50px 16px 40px 16px;">
             <van-button round block type="info" native-type="submit">提交</van-button>
         </div>
     </van-form>
@@ -93,11 +116,12 @@ export default {
       form: {
         tel: '',
         code: '',
-        age: 25,
+        age: '',
         item: '',
         address: '',
         idCard: [],
-        video: []
+        video: [],
+        message: ''
       },
       columns: [
         {
@@ -154,8 +178,9 @@ export default {
 <style scope>
 .publish-wrap{
     height: 100vh;
-    background: linear-gradient(45deg, palegoldenrod, pink, plum);
-    animation: hueRotate 10s infinite alternate;
+    overflow: auto;
+    /* background: linear-gradient(45deg, palegoldenrod, pink, plum); */
+    /* animation: hueRotate 10s infinite alternate; */
 }
 @keyframes hueRotate {
     100% {
@@ -165,7 +190,7 @@ export default {
 }
 .form-wrap{
     width: 90%;
-    padding: 50px 10px 10px 10px;
+    padding: 10px 10px 10px 10px;
     margin: 0 auto;
 }
 .custom-button {

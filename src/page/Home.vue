@@ -6,7 +6,7 @@
                 <img v-lazy="image" @click="toPublish"/>
             </van-swipe-item>
         </van-swipe>
-    <!-- <notice-bar /> -->
+    <notice-bar :msg="activityRemark"/>
     </van-sticky>
     <!-- <van-row type="flex" justify="space-around" class="data-panel">
       <van-col span="6" type="flex" justify="center">
@@ -23,16 +23,16 @@
       </van-col>
     </van-row> -->
     <van-row class="data-panel">
-      <van-col span="8" type="flex" justify="center">
-        <van-row>6</van-row>
+      <van-col span="8" type="flex" justify="center" align="center">
+        <van-row>{{userNumber}}</van-row>
         <van-row>报名人数</van-row>
       </van-col>
-      <van-col span="8" type="flex" justify="center">
-        <van-row>338</van-row>
+      <van-col span="8" type="flex" justify="center" align="center">
+        <van-row>{{voteNumber}}</van-row>
         <van-row>累计票数</van-row>
       </van-col>
-      <van-col span="8" type="flex" justify="center">
-        <van-row>6681</van-row>
+      <van-col span="8" type="flex" justify="center" align="center">
+        <van-row>{{readNumber}}</van-row>
         <van-row>访问人数</van-row>
       </van-col>
     </van-row>
@@ -47,7 +47,7 @@
         <empty description="暂时还没有参赛作品" image="search" v-if="!list.length"/>
         <!-- <van-cell v-else v-for="item in list" :key="item" :title="item" /> -->
         <van-grid :gutter="10" :border="false" :column-num="2">
-            <van-grid-item v-for="(item, index) in list" :key="index">
+            <van-grid-item v-for="(item, index) in list" :key="index" @click="toDetail">
                 <!-- <video src="https://media.w3.org/2010/05/sintel/trailer.mp4"></video> -->
                 <div class="custom-grid-item">
                     <img src="https://weiliicimg9.pstatp.com/weili/l/1060456631215325195.webp" alt="">
@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import { fetchActivityInfo, fetchStatics, fetchList } from '@/request/index'
 import Tabbar from '@/components/Tabbar.vue'
 import NoticeBar from '@/components/NoticeBar.vue'
 import Vue from 'vue'
@@ -83,6 +84,10 @@ export default {
   components: {Tabbar, NoticeBar, Empty},
   data () {
     return {
+      readNumber: 0,
+      userNumber: 0,
+      voteNumber: 0,
+      activityRemark: '',
       images: [
         'https://zl-pub.oss-cn-hangzhou.aliyuncs.com/upload/202101/30/308909273600016384.png',
         'https://zl-pub.oss-cn-hangzhou.aliyuncs.com/upload/202101/30/308909273600016384.png'
@@ -93,6 +98,28 @@ export default {
     }
   },
   methods: {
+    getActivity () {
+      fetchActivityInfo().then(res => {
+        console.log(res.data)
+        this.images = res.data.bannerList
+        this.activityRemark = res.data.activityRemark
+      })
+    },
+    getStatics () {
+      fetchStatics().then(res => {
+        this.readNumber = res.data.readNumber
+        this.userNumber = res.data.userNumber
+        this.voteNumber = res.data.voteNumber
+      })
+    },
+    getList () {
+      fetchList({
+        page: 1,
+        activityId: localStorage.getItem('activityId')
+      }).then(res => {
+        console.log(res)
+      })
+    },
     onLoad () {
       setTimeout(() => {
         for (let i = 0; i < 10; i++) {
@@ -108,7 +135,15 @@ export default {
     },
     toPublish () {
       this.$router.push('/publish')
+    },
+    toDetail () {
+      this.$router.push('/detail')
     }
+  },
+  mounted () {
+    this.getActivity()
+    this.getStatics()
+    this.getList()
   }
 }
 </script>
