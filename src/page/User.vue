@@ -11,10 +11,10 @@
             width="80px"
             height="80px"
             fit="cover"
-            src="https://img01.yzcdn.cn/vant/cat.jpeg"
+            :src="userInfo.headImageUrl"
           />
         </van-col>
-        <van-col offset="3">孙燕姿</van-col>
+        <van-col offset="3">{{userInfo.nikeName}}</van-col>
       </van-row>
       <van-cell title="活动规则" is-link url="/rule" />
       <van-cell title="活动简介" is-link url="/reduce" />
@@ -34,12 +34,21 @@ export default {
   components: {Tabbar},
   data () {
     return {
-      logined: true
+      logined: false,
+      userInfo: {}
     }
   },
   methods: {
     toLogin () {
       this.$router.push('/login')
+    }
+  },
+  mounted () {
+    let _userInfo = localStorage.getItem('userInfo')
+    let userInfo = JSON.parse(_userInfo)
+    if (userInfo.userId) {
+      this.logined = true
+      this.userInfo = userInfo
     }
   }
 }

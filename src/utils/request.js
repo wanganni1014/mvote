@@ -29,10 +29,12 @@ service.interceptors.response.use(
     if (response.status !== 200) {
       return Promise.reject(response)
     } else {
-      if (!response.data) {
-        return response
-      }
-      if (response.data.code !== 200) {
+      // let res = response.data
+      // if (!res.data && res.code !== 200) {
+      //   return response.data
+      // }
+      if (response.data.code && response.data.code !== 200) {
+        // this.$toast(response.data.message)
         return Promise.reject(response)
       } else {
         return response.data

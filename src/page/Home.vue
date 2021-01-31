@@ -45,15 +45,13 @@
         class="content"
         >
         <empty description="暂时还没有参赛作品" image="search" v-if="!list.length"/>
-        <!-- <van-cell v-else v-for="item in list" :key="item" :title="item" /> -->
         <van-grid :gutter="10" :border="false" :column-num="2">
             <van-grid-item v-for="(item, index) in list" :key="index" @click="toDetail">
-                <!-- <video src="https://media.w3.org/2010/05/sintel/trailer.mp4"></video> -->
                 <div class="custom-grid-item">
-                    <img src="https://weiliicimg9.pstatp.com/weili/l/1060456631215325195.webp" alt="">
+                    <img :src="item.videoImage" alt="参赛封面">
                     <div class="competitor-info">
-                        <div>徐佳丽</div>
-                        <div class="score">99票</div>
+                        <div>{{item.userName}}</div>
+                        <div class="score">{{item.voteNumber}}</div>
                     </div>
                     <div class="competitor-btn">
                         <van-button color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="like" round>投票</van-button>
@@ -88,13 +86,11 @@ export default {
       userNumber: 0,
       voteNumber: 0,
       activityRemark: '',
-      images: [
-        'https://zl-pub.oss-cn-hangzhou.aliyuncs.com/upload/202101/30/308909273600016384.png',
-        'https://zl-pub.oss-cn-hangzhou.aliyuncs.com/upload/202101/30/308909273600016384.png'
-      ],
+      images: [],
       list: [],
       loading: false,
-      finished: false
+      finished: false,
+      currPage: 1
     }
   },
   methods: {
@@ -112,26 +108,22 @@ export default {
         this.voteNumber = res.data.voteNumber
       })
     },
-    getList () {
+    onLoad () {
       fetchList({
-        page: 1,
+        page: this.currPage,
         activityId: localStorage.getItem('activityId')
       }).then(res => {
-        console.log(res)
-      })
-    },
-    onLoad () {
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1)
-        }
+        console.log(res.data.list)
+        let list = res.data.list
+        this.list = list.length ? this.list.concat(list) : this.list
         this.loading = false
-        this.$toast('刷新成功')
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
+        if (this.currPage < res.data.totalPage) {
+          this.currPage++
+        }
+        if (this.list.length >= res.data.totalCount) {
           this.finished = true
         }
-      }, 300)
+      })
     },
     toPublish () {
       this.$router.push('/publish')
@@ -143,7 +135,6 @@ export default {
   mounted () {
     this.getActivity()
     this.getStatics()
-    this.getList()
   }
 }
 </script>

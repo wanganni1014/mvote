@@ -11,28 +11,25 @@
     <div class="form-wrap">
          <van-form @submit="onSubmit" validate-trigger="onSubmit">
         <van-field
-            v-model="form.name"
-            name="name"
+            v-model="form.userName"
+            name="userName"
             label="姓名"
-            clearable
             placeholder="请输入姓名"
             :rules="[{ required: true, message: '请输入姓名' }]"
         />
         <van-field
-            v-model="form.tel"
-            name="tel"
+            v-model="form.userPhone"
+            name="userPhone"
             type="tel"
             label="联系方式"
-            clearable
             placeholder="请输入手机号"
             :rules="[{ required: true, message: '请输入联系方式' }]"
         />
         <van-field
-            v-model="form.age"
-            name="age"
+            v-model="form.userAge"
+            name="userAge"
             type="tel"
             label="年龄"
-            clearable
             placeholder="请输入年龄"
             :rules="[{ required: true, message: '请输入年龄' }]"
         />
@@ -51,49 +48,69 @@
             readonly
             clickable
             name="picker"
-            :value="form.item"
+            :value="pickerValue"
             label="参赛项目"
             placeholder="请选择参赛项目"
+            rows="1"
+            autosize
+            type="textarea"
             @click="showPicker = true"
             :rules="[{ required: true, message: '请选择参赛项目' }]"
             />
             <van-popup v-model="showPicker" round position="bottom">
-                <van-picker
+              <van-cascader
+                active-color="#1989fa"
+                v-model="pickerValue"
+                title="请选择组别"
+                :options="options"
+                :field-names="fieldNames"
+                @close="showPicker = false"
+                @finish="onFinish"
+              />
+                <!-- <van-picker
                     show-toolbar
                     :columns="columns"
                     @confirm="onConfirm"
                     @cancel="showPicker = false"
-                />
+                /> -->
             </van-popup>
         <van-field
-            v-model="form.address"
-            name="address"
+            v-model="form.userAddress"
+            name="userAddress"
             label="家庭住址"
-            clearable
             placeholder="请输入详细的家庭住址"
             rows="1"
             autosize
             type="textarea"
             :rules="[{ required: true, message: '请输入家庭住址' }]"
         />
-        <van-field name="idCard" label="身份证" :rules="[{ required: true, message: '请上传身份证照片' }]">
+        <van-field
+            v-model="form.userIdCard"
+            name="userIdCard"
+            label="身份证号"
+            placeholder="请输入您的身份证号码"
+            rows="1"
+            autosize
+            type="textarea"
+            :rules="[{ required: true, message: '请输入您的身份证号码' }]"
+        />
+        <van-field name="image" label="视频封面" :rules="[{ required: true, message: '请上传视频封面' }]">
             <template #input>
-                <van-uploader v-model="form.idCard" />
+                <van-uploader v-model="form.image" :max-count="1" :after-read="uploadFile"/>
             </template>
         </van-field>
         <van-field name="video" label="参赛视频" :rules="[{ required: true, message: '请上传参赛视频' }]">
             <template #input>
-                <van-uploader v-model="form.video" />
+                <van-uploader v-model="form.video" :max-count="1"/>
             </template>
         </van-field>
         <van-field
-            v-model="form.message"
-            name="remark"
+            v-model="form.usserIntro"
+            name="usserIntro"
             label="参赛宣言"
             rows="1"
             autosize
             type="textarea"
-            clearable
             placeholder="请输入您的参赛宣言"
             :rules="[{ required: true, message: '请输入参赛宣言' }]"
         />
@@ -108,55 +125,32 @@
 <script>
 import Vue from 'vue'
 import { Uploader } from 'vant'
+import { fetchCategory, fetchApply, fetchUpload } from '@/request/index'
 Vue.use(Uploader)
 export default {
   name: 'Publish',
   data () {
     return {
       form: {
-        tel: '',
-        code: '',
-        age: '',
-        item: '',
-        address: '',
-        idCard: [],
-        video: [],
-        message: ''
+        userPhone: '',
+        userName: '',
+        userAge: '',
+        userAddress: '',
+        usserIntro: '',
+        userIdCard: '',
+        videoUrl: 'http://pic.studyyoun.com/0023.mp4',
+        videoImage: 'http://jbsc-1.oss-cn-beijing.aliyuncs.com/a67a0c23-531d-4c1d-851f-1c0120d1d38b.png',
+        activityId: localStorage.getItem('activityId'),
+        oneCategoryId: '',
+        oneCategoryTwo: ''
       },
-      columns: [
-        {
-          text: '第九套广播体操',
-          children: []
-        },
-        {
-          text: '深蹲起',
-          children: [
-            {
-              text: '成人组'
-            },
-            {
-              text: '青少年组'
-            }
-          ]
-        },
-        {
-          text: '跳绳',
-          children: [
-            {
-              text: '青少年组（男子）'
-            },
-            {
-              text: '成人组（男子）'
-            },
-            {
-              text: '青少年组（女子）'
-            },
-            {
-              text: '成人组（女子）'
-            }
-          ]
-        }
-      ],
+      pickerValue: '',
+      fieldNames: {
+        text: 'activityCategoryName',
+        value: 'activityCategoryId',
+        children: 'levelCategoryList'
+      },
+      options: [],
       showPicker: false
     }
   },
@@ -164,14 +158,54 @@ export default {
     onClickLeft () {
       this.$router.go(-1)
     },
-    onSubmit (values) {
-      console.log('submit', values)
+    onSubmit () {
+      let data = this.form
+      let userId = localStorage.getItem('userId')
+      data.userId = userId
+      delete data.video
+      delete data.image
+      fetchApply(data).then(res => {
+        this.$toast(res.data)
+        setTimeout(() => {
+          this.$router.replace('/index')
+        }, 2000)
+      })
     },
-    onConfirm (value) {
-      console.log(value)
-      this.value = value
+    uploadFile (file) {
+      console.log(file.file)
+      fetchUpload({file: file.file}).then(res => {
+        console.log(res)
+      })
+    },
+    getCategory () {
+      fetchCategory().then(res => {
+        let options = res.data
+        // 增加全部栏
+        let handleOptions = (list) => {
+          list.map(item => {
+            if (item.levelCategoryList) {
+              if (!item.levelCategoryList.length) {
+                item.levelCategoryList = null
+              } else {
+                handleOptions(item.levelCategoryList)
+              }
+            }
+          })
+          return list
+        }
+        this.options = handleOptions(options)
+      })
+    },
+    onFinish ({ selectedOptions }) {
       this.showPicker = false
+      this.pickerValue = selectedOptions.map((option) => option.activityCategoryName).join('/')
+      let categoryId = selectedOptions.map((option) => option.activityCategoryId)
+      this.form.oneCategoryId = categoryId[0] || ''
+      this.form.oneCategoryTwo = categoryId[1] || ''
     }
+  },
+  mounted () {
+    this.getCategory()
   }
 }
 </script>

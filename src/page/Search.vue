@@ -2,16 +2,21 @@
   <div>
     <van-sticky class="sticky">
         <van-search
-            v-model="value"
+            v-model="keyword"
             shape="round"
+            show-action
             background="#1989Fa"
             placeholder="请输入搜索关键词"
-            />
+            @search="onSearch"
+            >
+             <template #action>
+              <div @click="onSearch" style="color: white">搜索</div>
+            </template>
+            </van-search>
             <van-field
               v-model="fieldValue"
               is-link
               readonly
-              label="组别"
               placeholder="请选择组别"
               @click="show = true"
             />
@@ -39,7 +44,6 @@
         <!-- <van-cell v-else v-for="item in list" :key="item" :title="item" /> -->
         <van-grid :gutter="10" :border="false" :column-num="2">
             <van-grid-item v-for="(item, index) in list" :key="index" @click="toPublish">
-                <!-- <video src="https://media.w3.org/2010/05/sintel/trailer.mp4"></video> -->
                 <div class="custom-grid-item">
                     <img src="https://weiliicimg9.pstatp.com/weili/l/1060456631215325195.webp" alt="">
                     <div class="competitor-info">
@@ -48,7 +52,6 @@
                     </div>
                     <div class="competitor-btn">
                         <van-button color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="like" round>投票</van-button>
-                        <!-- <van-button disabled color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="good-job" round>已投</van-button> -->
                     </div>
                 </div>
             </van-grid-item>
@@ -59,6 +62,7 @@
 </template>
 
 <script>
+import { fetchList, fetchCategory } from '@/request/index'
 import Tabbar from '@/components/Tabbar.vue'
 import NoticeBar from '@/components/NoticeBar.vue'
 import Vue from 'vue'
@@ -74,53 +78,73 @@ export default {
   components: {Tabbar, NoticeBar, Empty},
   data () {
     return {
-      images: [
-        'https://img01.yzcdn.cn/vant/apple-1.jpg',
-        'https://img01.yzcdn.cn/vant/apple-2.jpg'
-      ],
+      currPage: 1,
       list: [],
       loading: false,
       finished: false,
-      value: '',
+      keyword: '',
       fieldNames: {
-        text: 'name',
-        value: 'code',
-        children: 'items'
+        text: 'activityCategoryName',
+        value: 'activityCategoryId',
+        children: 'levelCategoryList'
       },
-      options: [
-        {
-          name: '第九套广播体操',
-          code: '330000'
-        },
-        {
-          name: '深蹲起',
-          code: '320001',
-          items: [{ name: '成人组', code: '3201001' }, { name: '青少年组', code: '3201002' }]
-        },
-        {
-          name: '跳绳',
-          code: '320002',
-          items: [{ name: '青少年组（男子）', code: '320100' }, { name: '成人组（男子）', code: '320101' }, { name: '青少年组（女子）', code: '320122' }, { name: '成人组（女子）', code: '320123' }]
-        }
-      ],
+      options: [],
       show: false,
       fieldValue: '',
       pickerValue: ''
     }
   },
   methods: {
-    onLoad () {
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1)
-        }
+    onSearch () {
+      this.list = []
+      this.currPage = 1
+      this.getList()
+    },
+    getList () {
+      fetchList({
+        page: this.currPage,
+        activityId: localStorage.getItem('activityId'),
+        userName: this.keyword,
+        oneCategoryId: this.oneCategoryId,
+        oneCategoryTwo: this.oneCategoryTwo
+      }).then(res => {
+        let list = res.data.list
+        this.list = list.length ? this.list.concat(list) : this.list
         this.loading = false
-        this.$toast('刷新成功')
-        // 数据全部加载完成
-        if (this.list.length >= 40) {
+        if (this.currPage < res.data.totalPage) {
+          this.currPage++
+        }
+        if (this.list.length >= res.data.totalCount) {
           this.finished = true
         }
-      }, 300)
+      })
+    },
+    onLoad () {
+      this.getList()
+    },
+    getCategory () {
+      fetchCategory().then(res => {
+        let options = res.data
+        // 增加全部栏
+        let handleOptions = (list) => {
+          list.unshift({
+            activityCategoryName: '全部',
+            activityCategoryId: '',
+            levelCategoryList: null
+          })
+          list.map(item => {
+            if (item.levelCategoryList) {
+              if (!item.levelCategoryList.length) {
+                item.levelCategoryList = null
+              } else {
+                handleOptions(item.levelCategoryList)
+              }
+            }
+          })
+          return list
+        }
+        this.options = handleOptions(options)
+      })
     },
     toPublish () {
       this.$router.push('/publish')
@@ -130,8 +154,17 @@ export default {
     },
     onFinish ({ selectedOptions }) {
       this.show = false
-      this.fieldValue = selectedOptions.map((option) => option.name).join('/')
+      this.fieldValue = selectedOptions.map((option) => option.activityCategoryName).join('/')
+      let categoryId = selectedOptions.map((option) => option.activityCategoryId)
+      this.oneCategoryId = categoryId[0] || ''
+      this.oneCategoryTwo = categoryId[1] || ''
+      this.currPage = 1
+      this.list = []
+      this.getList()
     }
+  },
+  mounted () {
+    this.getCategory()
   }
 }
 </script>
