@@ -16,9 +16,9 @@
         </van-col>
         <van-col offset="3">{{userInfo.nikeName}}</van-col>
       </van-row>
-      <van-cell title="活动规则" is-link url="/rule" />
-      <van-cell title="活动简介" is-link url="/reduce" />
-      <van-cell title="我的参赛作品" is-link url="/myVideo" />
+      <van-cell title="活动规则" is-link to="rule" />
+      <van-cell title="活动介绍" is-link to="introduce" />
+      <van-cell title="我的参赛作品" is-link to="myVideo" />
     </div>
     <Tabbar />
   </div>

@@ -1,7 +1,26 @@
 <template>
   <div class="rank-wrap">
     <van-sticky class="sticky">
-    <div class="sort-bg">
+      <van-field
+      label="筛选分组"
+              v-model="fieldValue"
+              is-link
+              readonly
+              placeholder="请选择组别"
+              @click="show = true"
+            />
+            <van-popup v-model="show" round position="bottom">
+              <van-cascader
+               active-color="#1989fa"
+                v-model="pickerValue"
+                title="请选择组别"
+                :options="options"
+                :field-names="fieldNames"
+                @close="show = false"
+                @finish="onFinish"
+              />
+            </van-popup>
+    <!-- <div class="sort-bg">
         <span>一级组：</span>
         <span
           class="sort-item"
@@ -22,7 +41,7 @@
           @click.stop="onSortItemTap(index)"
           >{{ sort }}</span
         >
-      </div>
+      </div> -->
     </van-sticky>
     <empty description="暂时还没有参赛作品" image="search" v-if="!list.length" />
     <div class="rank-title" v-else>仅显示前100名</div>
@@ -33,18 +52,18 @@
       finished-text="没有更多了"
       @load="onLoad"
     >
-      <div class="rank-item" v-for="(user, index) in list" :key="'rank' + index">
+      <div class="rank-item" v-for="(user, index) in list" :key="index">
         <div class="rank-item-info">
           <span class="index">{{ index + 1 }}</span>
-          <img
+          <!-- <img
             class="avatar"
             src="https://weiliicimg9.pstatp.com/weili/l/1060456631215325195.webp"
             alt=""
-          />
-          <span class="order">哈哈哈哈</span>
+          /> -->
+          <span class="order">{{user.userName}}</span>
         </div>
         <!-- <span class="name">哈哈哈哈</span> -->
-        <span class="piao">123123</span>
+        <span class="piao">{{user.voteNumber}}</span>
       </div>
     </van-list>
     <Tabbar />
@@ -52,6 +71,7 @@
 </template>
 
 <script>
+import { fetchList, fetchCategory } from '@/request/index'
 import Tabbar from '@/components/Tabbar.vue'
 import Empty from '@/components/Empty.vue'
 import Vue from 'vue'
@@ -66,9 +86,18 @@ export default {
   data () {
     return {
       list: [],
-      sortIndex: 0,
-      sorts: ['全部', '广播体操', '武术', '健身操', '仰卧起坐', '太极拳', '跳绳'],
-      sorts2: ['全部', '男子组', '女子组'],
+      // sortIndex: 0,
+      // sorts: ['全部', '广播体操', '武术', '健身操', '仰卧起坐', '太极拳', '跳绳'],
+      // sorts2: ['全部', '男子组', '女子组'],
+      fieldNames: {
+        text: 'activityCategoryName',
+        value: 'activityCategoryId',
+        children: 'levelCategoryList'
+      },
+      options: [],
+      show: false,
+      fieldValue: '',
+      pickerValue: '',
       loading: false,
       finished: false
     }
@@ -76,35 +105,77 @@ export default {
 
   methods: {
     onLoad () {
-      setTimeout(() => {
-        for (let i = 0; i < 10; i++) {
-          this.list.push(this.list.length + 1)
-        }
-        this.loading = false
-        if (this.list.length >= 100) {
-          this.finished = true
-        }
-      }, 300)
+      this.getList()
     },
 
-    onSortItemTap (index) {
-      if (this.sortIndex !== index) {
-        this.sortIndex = index
-      }
+    // onSortItemTap (index) {
+    //   if (this.sortIndex !== index) {
+    //     this.sortIndex = index
+    //   }
+    // }
+    getList () {
+      fetchList({
+        page: 1,
+        activityId: localStorage.getItem('activityId'),
+        oneCategoryId: this.oneCategoryId,
+        oneCategoryTwo: this.oneCategoryTwo
+      }).then(res => {
+        let list = res.data.list
+        this.list = list.length ? this.list.concat(list) : this.list
+        this.loading = false
+        this.finished = true
+      })
+    },
+    getCategory () {
+      fetchCategory().then(res => {
+        let options = res.data
+        // 增加全部栏
+        let handleOptions = (list) => {
+          list.unshift({
+            activityCategoryName: '全部',
+            activityCategoryId: '',
+            levelCategoryList: null
+          })
+          list.map(item => {
+            if (item.levelCategoryList) {
+              if (!item.levelCategoryList.length) {
+                item.levelCategoryList = null
+              } else {
+                handleOptions(item.levelCategoryList)
+              }
+            }
+          })
+          return list
+        }
+        this.options = handleOptions(options)
+      })
+    },
+    onFinish ({ selectedOptions }) {
+      this.show = false
+      this.fieldValue = selectedOptions.map((option) => option.activityCategoryName).join('/')
+      let categoryId = selectedOptions.map((option) => option.activityCategoryId)
+      this.oneCategoryId = categoryId[0] || ''
+      this.oneCategoryTwo = categoryId[1] || ''
+      this.list = []
+      this.getList()
     }
+  },
+  mounted () {
+    this.getCategory()
   }
 }
 </script>
 
-<style>
+<style scope>
 .rank-wrap {
   background-color: white;
   height: 100vh;
 }
 .van-sticky{
-  background-color: white;
+  background-color: #f7f7ff;
   padding-bottom: 10px;
 }
+
 .sort-bg {
   width: 100%;
   padding: 10px 14px 0 8px;

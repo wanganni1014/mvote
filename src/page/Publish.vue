@@ -96,7 +96,7 @@
         />
         <van-field name="image" label="视频封面" :rules="[{ required: true, message: '请上传视频封面' }]">
             <template #input>
-                <van-uploader v-model="form.image" :max-count="1" :after-read="uploadFile"/>
+                <van-uploader v-model="form.image" :max-count="1" :after-read="uploadFile" accept="image/*" />
             </template>
         </van-field>
         <van-field name="video" label="参赛视频" :rules="[{ required: true, message: '请上传参赛视频' }]">
@@ -172,8 +172,9 @@ export default {
       })
     },
     uploadFile (file) {
-      console.log(file.file)
-      fetchUpload({file: file.file}).then(res => {
+      // console.log(file.file)
+      let uploadUrl = URL.createObjectURL(file)
+      fetchUpload({file: uploadUrl}).then(res => {
         console.log(res)
       })
     },

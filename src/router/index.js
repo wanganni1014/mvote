@@ -9,6 +9,8 @@ import Login from '@/page/Login'
 // import Audit from '@/page/Audit'
 import Search from '@/page/Search'
 import Detail from '@/page/Detail'
+import Introduce from '@/page/Introduce'
+import Rule from '@/page/Rule'
 
 Vue.use(Router)
 
@@ -47,6 +49,16 @@ export default new Router({
     path: '/publish',
     name: 'Publish',
     component: Publish
+  },
+  {
+    path: '/introduce',
+    name: 'Introduce',
+    component: Introduce
+  },
+  {
+    path: '/rule',
+    name: 'Rule',
+    component: Rule
   },
   {
     path: '/login',

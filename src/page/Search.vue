@@ -45,10 +45,10 @@
         <van-grid :gutter="10" :border="false" :column-num="2">
             <van-grid-item v-for="(item, index) in list" :key="index" @click="toPublish">
                 <div class="custom-grid-item">
-                    <img src="https://weiliicimg9.pstatp.com/weili/l/1060456631215325195.webp" alt="">
+                    <img :src="item.videoImage" alt="">
                     <div class="competitor-info">
-                        <div>徐佳丽</div>
-                        <div class="score">99票</div>
+                        <div>{{item.userName}}</div>
+                        <div class="score">{{item.voteNumber}}票</div>
                     </div>
                     <div class="competitor-btn">
                         <van-button color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="like" round>投票</van-button>

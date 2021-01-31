@@ -53,7 +53,7 @@
                         <div>{{item.userName}}</div>
                         <div class="score">{{item.voteNumber}}</div>
                     </div>
-                    <div class="competitor-btn">
+                    <div class="competitor-btn" @click.stop="toVote(item.id)">
                         <van-button color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="like" round>投票</van-button>
                         <!-- <van-button disabled color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="good-job" round>已投</van-button> -->
                     </div>
@@ -66,7 +66,7 @@
 </template>
 
 <script>
-import { fetchActivityInfo, fetchStatics, fetchList } from '@/request/index'
+import { fetchActivityInfo, fetchStatics, fetchList, fetchVote } from '@/request/index'
 import Tabbar from '@/components/Tabbar.vue'
 import NoticeBar from '@/components/NoticeBar.vue'
 import Vue from 'vue'
@@ -108,12 +108,23 @@ export default {
         this.voteNumber = res.data.voteNumber
       })
     },
+    toVote (id) {
+      let obj = {
+        activityId: localStorage.getItem('activityId'),
+        activityUserId: id,
+        voteUserId: localStorage.getItem('userId')
+      }
+      fetchVote(obj).then(res => {
+        this.$toast('投票成功')
+      }).catch(err => {
+        this.$toast(err.data.msg)
+      })
+    },
     onLoad () {
       fetchList({
         page: this.currPage,
         activityId: localStorage.getItem('activityId')
       }).then(res => {
-        console.log(res.data.list)
         let list = res.data.list
         this.list = list.length ? this.list.concat(list) : this.list
         this.loading = false
