@@ -6,7 +6,7 @@ import Rank from '@/page/Rank'
 import User from '@/page/User'
 import Publish from '@/page/Publish'
 import Login from '@/page/Login'
-import Audit from '@/page/Audit'
+// import Audit from '@/page/Audit'
 import Search from '@/page/Search'
 import Detail from '@/page/Detail'
 
