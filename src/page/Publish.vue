@@ -185,6 +185,14 @@ export default {
     },
     uploadVideo (info) {
       let forms = new FormData()
+      console.log(info)
+      // 获取视频时长
+      var url = URL.createObjectURL(info.file)
+      var audioElement = new Audio(url)
+      audioElement.addEventListener('loadedmetadata', (_event) => {
+        this.audioDuration = parseInt(audioElement.duration)
+        console.log(this.audioDuration)
+      })
       forms.append('file', info.file)
       this.uploadFile(forms, 'videoUrl')
     },
@@ -192,6 +200,14 @@ export default {
       fetchUpload(forms).then(res => {
         let url = res.data
         this.form[key] = url
+      }).catch(() => {
+        if (key === 'videoImage') {
+          this.$toast('视频封面上传失败,请重试')
+          this.form.image = []
+        } else {
+          this.$toast('视频文件上传失败,请重试')
+          this.form.video = []
+        }
       })
     },
     getCategory () {

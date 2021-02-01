@@ -129,8 +129,7 @@ export default {
         this.loading = false
         if (this.currPage < res.data.totalPage) {
           this.currPage++
-        }
-        if (this.list.length >= res.data.totalCount) {
+        } else {
           this.finished = true
         }
       })

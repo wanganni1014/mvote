@@ -48,7 +48,8 @@
       </van-col>
     </van-row>
 
-    <van-list
+    <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+      <van-list
         v-model="loading"
         :finished="finished"
         finished-text="没有更多了"
@@ -76,7 +77,8 @@
                 </div>
             </van-grid-item>
         </van-grid>
-    </van-list>
+        </van-list>
+    </van-pull-refresh>
     <tabbar />
   </div>
 </template>
@@ -106,6 +108,7 @@ export default {
       userNumber: 0,
       voteNumber: 0,
       activityRemark: '',
+      refreshing: false,
       images: [],
       list: [],
       loading: false,
@@ -149,15 +152,18 @@ export default {
         page: this.currPage,
         activityId: localStorage.getItem('activityId')
       }).then(res => {
-        let list = res.data.list
-        this.list = list.length ? this.list.concat(list) : this.list
+        this.refreshing = false
         this.loading = false
+        let list = res.data.list
+        this.list = this.currPage === 1 ? list : this.list.concat(list)
+        this.currPage++
         if (this.currPage < res.data.totalPage) {
           this.currPage++
-        }
-        if (this.list.length >= res.data.totalCount) {
+        } else {
           this.finished = true
         }
+      }).catch(() => {
+        this.refreshing = false
       })
     },
     toPublish (item) {
@@ -165,6 +171,13 @@ export default {
     },
     toDetail (item) {
       this.$router.push({path: '/detail', query: { activityId: item.activityId, recordId: item.id, userId: item.userId }})
+    },
+    onRefresh () {
+      // 清空列表数据
+      this.finished = false
+      this.loading = true
+      this.currPage = 1
+      this.onLoad()
     }
   },
   mounted () {
