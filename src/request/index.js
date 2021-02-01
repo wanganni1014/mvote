@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-// import qs from 'qs'
 
 export function fetchActivityInfo () {
   return request({
@@ -8,9 +7,9 @@ export function fetchActivityInfo () {
   })
 }
 
-export function fetchStatics () {
+export function fetchStatics (activityId) {
   return request({
-    url: '/activity/app//home/stat',
+    url: '/activity/app//home/stat?activityId=' + activityId,
     method: 'get'
   })
 }
@@ -52,6 +51,14 @@ export function fetchVote (data) {
   })
 }
 
+export function fetchRank (data) {
+  return request({
+    url: '/activity/app//rank/list',
+    method: 'post',
+    data
+  })
+}
+
 export function fetchApply (data) {
   return request({
     url: '/activity/app/apply',
@@ -64,8 +71,14 @@ export function fetchUpload (data) {
   return request({
     url: '/activity/app/file/upload',
     method: 'post',
-    headers: { 'content-type': 'application/x-www-form-urlencoded' },
+    headers: { 'content-type': 'multipart/form-data' },
     data
-    // data: qs.stringify(data)
+  })
+}
+
+export function fetchMyWorks (userId) {
+  return request({
+    url: `/activity/app//my/list/${userId}`,
+    method: 'get'
   })
 }

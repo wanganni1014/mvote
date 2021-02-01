@@ -34,7 +34,7 @@ service.interceptors.response.use(
       //   return response.data
       // }
       if (response.data.code && response.data.code !== 200) {
-        // this.$toast(response.data.message)
+        this.$toast(response.data.msg)
         return Promise.reject(response)
       } else {
         return response.data

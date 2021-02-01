@@ -171,11 +171,14 @@ export default {
         }, 2000)
       })
     },
-    uploadFile (file) {
-      // console.log(file.file)
-      let uploadUrl = URL.createObjectURL(file)
-      fetchUpload({file: uploadUrl}).then(res => {
-        console.log(res)
+    uploadFile (info, key) {
+      let forms = new FormData()
+      forms.append('file', info.file)
+      fetchUpload(forms).then(res => {
+        let url = res.data
+        this.form[key] = url
+      }).catch(err => {
+        this.$toast(err.data.msg)
       })
     },
     getCategory () {

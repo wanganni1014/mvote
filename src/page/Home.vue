@@ -24,15 +24,15 @@
     </van-row> -->
     <van-row class="data-panel">
       <van-col span="8" type="flex" justify="center" align="center">
-        <van-row>{{userNumber}}</van-row>
+        <van-row>{{userNumber || 0}}</van-row>
         <van-row>报名人数</van-row>
       </van-col>
       <van-col span="8" type="flex" justify="center" align="center">
-        <van-row>{{voteNumber}}</van-row>
+        <van-row>{{voteNumber || 0}}</van-row>
         <van-row>累计票数</van-row>
       </van-col>
       <van-col span="8" type="flex" justify="center" align="center">
-        <van-row>{{readNumber}}</van-row>
+        <van-row>{{readNumber || 0}}</van-row>
         <van-row>访问人数</van-row>
       </van-col>
     </van-row>
@@ -102,7 +102,7 @@ export default {
       })
     },
     getStatics () {
-      fetchStatics().then(res => {
+      fetchStatics(localStorage.getItem('activityId')).then(res => {
         this.readNumber = res.data.readNumber
         this.userNumber = res.data.userNumber
         this.voteNumber = res.data.voteNumber
@@ -186,12 +186,9 @@ export default {
         padding-bottom: 50px;
         margin-top: 12px;
     }
-    .custom-grid-item{
-        width: 140px;
-    }
     .custom-grid-item img{
         width: 100%;
-        height: auto;
+        height: 100px;
     }
     .competitor-info{
         display: flex;

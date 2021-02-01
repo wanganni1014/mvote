@@ -55,11 +55,11 @@
       <div class="rank-item" v-for="(user, index) in list" :key="index">
         <div class="rank-item-info">
           <span class="index">{{ index + 1 }}</span>
-          <!-- <img
+          <img
             class="avatar"
-            src="https://weiliicimg9.pstatp.com/weili/l/1060456631215325195.webp"
-            alt=""
-          /> -->
+            :src="user.userHeaderImage"
+            v-if="user.userHeaderImage"
+          />
           <span class="order">{{user.userName}}</span>
         </div>
         <!-- <span class="name">哈哈哈哈</span> -->
@@ -71,7 +71,7 @@
 </template>
 
 <script>
-import { fetchList, fetchCategory } from '@/request/index'
+import { fetchRank, fetchCategory } from '@/request/index'
 import Tabbar from '@/components/Tabbar.vue'
 import Empty from '@/components/Empty.vue'
 import Vue from 'vue'
@@ -114,7 +114,7 @@ export default {
     //   }
     // }
     getList () {
-      fetchList({
+      fetchRank({
         page: 1,
         activityId: localStorage.getItem('activityId'),
         oneCategoryId: this.oneCategoryId,
@@ -239,7 +239,6 @@ export default {
   width: 50px;
   height: 50px;
   border-radius: 50%;
-  border: solid 1px #dedede;
 }
 .rank-item .order {
   width: 80px;

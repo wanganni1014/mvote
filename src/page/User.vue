@@ -1,9 +1,6 @@
 <template>
   <div>
-    <van-empty description="您还没有登陆哦~" v-if="!logined">
-        <van-button round type="danger" class="bottom-button" @click="toLogin">去登陆</van-button>
-    </van-empty>
-    <div v-else>
+    <div v-if="logined">
       <van-row type="flex" align="center" class="info">
         <van-col span="4" offset="1">
           <van-image
@@ -20,6 +17,9 @@
       <van-cell title="活动介绍" is-link to="introduce" />
       <van-cell title="我的参赛作品" is-link to="myVideo" />
     </div>
+    <van-empty description="您还没有登陆哦~" v-else>
+        <van-button round type="danger" class="bottom-button" @click="toLogin">去登陆</van-button>
+    </van-empty>
     <Tabbar />
   </div>
 </template>
@@ -34,7 +34,7 @@ export default {
   components: {Tabbar},
   data () {
     return {
-      logined: false,
+      logined: true,
       userInfo: {}
     }
   },
