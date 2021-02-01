@@ -28,7 +28,6 @@
                 :options="options"
                 :field-names="fieldNames"
                 @close="show = false"
-                @change="onChange"
                 @finish="onFinish"
               />
             </van-popup>
@@ -43,7 +42,7 @@
         <empty description="暂时还没有参赛作品" image="search" v-if="!list.length"/>
         <!-- <van-cell v-else v-for="item in list" :key="item" :title="item" /> -->
         <van-grid :gutter="10" :border="false" :column-num="2">
-            <van-grid-item v-for="(item, index) in list" :key="index" @click="toPublish">
+            <van-grid-item v-for="(item, index) in list" :key="index" @click="toDetail(item)">
                 <div class="custom-grid-item">
                     <van-image
                       width="100%"
@@ -55,7 +54,7 @@
                         <div>{{item.userName}}</div>
                         <div class="score">{{item.voteNumber}}票</div>
                     </div>
-                    <div class="competitor-btn">
+                    <div class="competitor-btn" @click.stop="toVote(item, index)">
                         <van-button color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="like" round>投票</van-button>
                     </div>
                 </div>
@@ -67,7 +66,7 @@
 </template>
 
 <script>
-import { fetchList, fetchCategory } from '@/request/index'
+import { fetchList, fetchCategory, fetchVote } from '@/request/index'
 import Tabbar from '@/components/Tabbar.vue'
 import NoticeBar from '@/components/NoticeBar.vue'
 import Vue from 'vue'
@@ -105,6 +104,17 @@ export default {
       this.list = []
       this.currPage = 1
       this.getList()
+    },
+    toVote (item, index) {
+      let obj = {
+        activityId: localStorage.getItem('activityId'),
+        activityUserId: item.id,
+        voteUserId: localStorage.getItem('userId')
+      }
+      fetchVote(obj).then(res => {
+        this.$toast('投票成功')
+        this.list[index].voteNumber++
+      })
     },
     getList () {
       fetchList({
@@ -155,8 +165,8 @@ export default {
     toPublish () {
       this.$router.push('/publish')
     },
-    onChange () {
-      console.log('change 啦')
+    toDetail (item) {
+      this.$router.push({path: '/detail', query: { activityId: item.activityId, recordId: item.id, userId: item.userId }})
     },
     onFinish ({ selectedOptions }) {
       this.show = false

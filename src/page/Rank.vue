@@ -55,10 +55,11 @@
       <div class="rank-item" v-for="(user, index) in list" :key="index">
         <div class="rank-item-info">
           <span class="index">{{ index + 1 }}</span>
-          <img
-            class="avatar"
+          <van-image
+            round
+            width="50"
+            height="50"
             :src="user.userHeaderImage"
-            v-if="user.userHeaderImage"
           />
           <span class="order">{{user.userName}}</span>
         </div>
@@ -234,11 +235,6 @@ export default {
 }
 .rank-item .index {
   width: 50px;
-}
-.rank-item .avatar {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
 }
 .rank-item .order {
   width: 80px;

@@ -82,3 +82,18 @@ export function fetchMyWorks (userId) {
     method: 'get'
   })
 }
+
+// 获取报名详情
+export function fetchDtail (recordId, userId, activityId) {
+  return request({
+    url: `/activity/app//my/apply/${recordId}/${userId}/${activityId}`,
+    method: 'get'
+  })
+}
+// 获取投票纪录
+export function fetchVoteRecord (userId) {
+  return request({
+    url: `/activity/app//vote/list/${userId}`,
+    method: 'get'
+  })
+}

@@ -8,7 +8,7 @@
       @click-left="onClickLeft"
     />
     </van-sticky>
-    <div class="my-works" v-for="(item, index) in list" :key="index">
+    <div class="my-works" v-for="(item, index) in list" :key="index" @click="toDetail(item)">
         <van-cell-group>
             <van-cell :title="item.createTime">
                 <template #right-icon>
@@ -48,6 +48,12 @@ export default {
   methods: {
     onClickLeft () {
       this.$router.go(-1)
+    },
+    toDetail (item) {
+      let userId = localStorage.getItem('userId')
+      if (item.applyStatues === 1) {
+        this.$router.push({path: '/detail', query: { activityId: item.activityId, recordId: item.id, userId: userId }})
+      }
     }
   },
   mounted () {

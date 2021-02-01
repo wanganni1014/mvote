@@ -169,8 +169,6 @@ export default {
         setTimeout(() => {
           this.$router.replace('/index')
         }, 2000)
-      }).catch(err => {
-        this.$toast(err.data.msg)
       })
     },
     uploadImage (info) {
@@ -187,8 +185,6 @@ export default {
       fetchUpload(forms).then(res => {
         let url = res.data
         this.form[key] = url
-      }).catch(err => {
-        this.$toast(err.data.msg)
       })
     },
     getCategory () {

@@ -1,4 +1,5 @@
 import axios from 'axios'
+import { Toast } from 'vant'
 
 // create an axios instance
 const service = axios.create({
@@ -34,7 +35,7 @@ service.interceptors.response.use(
       //   return response.data
       // }
       if (response.data.code && response.data.code !== 200) {
-        // this.$toast(response.data.msg)
+        Toast(response.data.msg || '网络异常')
         return Promise.reject(response)
       } else {
         return response.data

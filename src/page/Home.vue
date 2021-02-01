@@ -22,6 +22,17 @@
         <van-row class="down">访问人数</van-row>
       </van-col>
     </van-row> -->
+    <van-row type="flex" justify="center" align="center" class="time-panel">
+      <van-col type="flex" align="center">
+        <van-row>
+          <span class="time-label">活动倒计时: </span>
+          <van-count-down :time="time" format="DD 天 HH 时 mm 分 ss 秒" />
+        </van-row>
+        <van-row>
+          <span class="time-label">活动时间: {{startTime}} - {{endTime}}</span>
+        </van-row>
+    </van-col>
+    </van-row>
     <van-row class="data-panel">
       <van-col span="8" type="flex" justify="center" align="center">
         <van-row>{{userNumber || 0}}</van-row>
@@ -46,7 +57,7 @@
         >
         <empty description="暂时还没有参赛作品" image="search" v-if="!list.length"/>
         <van-grid :gutter="10" :border="false" :column-num="2">
-            <van-grid-item v-for="(item, index) in list" :key="index" @click="toDetail">
+            <van-grid-item v-for="(item, index) in list" :key="index" @click="toDetail(item)">
                 <div class="custom-grid-item">
                     <van-image
                       width="100%"
@@ -58,7 +69,7 @@
                         <div>{{item.userName}}</div>
                         <div class="score">{{item.voteNumber}}</div>
                     </div>
-                    <div class="competitor-btn" @click.stop="toVote(item.id)">
+                    <div class="competitor-btn" @click.stop="toVote(item, index)">
                         <van-button color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="like" round>投票</van-button>
                         <!-- <van-button disabled color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="good-job" round>已投</van-button> -->
                     </div>
@@ -88,6 +99,9 @@ export default {
   components: {Tabbar, NoticeBar, Empty},
   data () {
     return {
+      time: 30 * 60 * 60 * 1000,
+      startTime: '',
+      endTime: '',
       readNumber: 0,
       userNumber: 0,
       voteNumber: 0,
@@ -102,8 +116,12 @@ export default {
   methods: {
     getActivity () {
       fetchActivityInfo().then(res => {
-        console.log(res.data)
+        this.startTime = res.data.startTime
+        this.endTime = res.data.endTime
         this.images = res.data.bannerList
+        let curr = new Date().getTime()
+        let end = new Date(res.data.endTime).getTime()
+        this.time = end - curr
         this.activityRemark = res.data.activityRemark
       })
     },
@@ -114,16 +132,15 @@ export default {
         this.voteNumber = res.data.voteNumber
       })
     },
-    toVote (id) {
+    toVote (item, index) {
       let obj = {
         activityId: localStorage.getItem('activityId'),
-        activityUserId: id,
+        activityUserId: item.id,
         voteUserId: localStorage.getItem('userId')
       }
       fetchVote(obj).then(res => {
         this.$toast('投票成功')
-      }).catch(err => {
-        this.$toast(err.data.msg)
+        this.list[index].voteNumber++
       })
     },
     onLoad () {
@@ -142,11 +159,11 @@ export default {
         }
       })
     },
-    toPublish () {
+    toPublish (item) {
       this.$router.push('/publish')
     },
-    toDetail () {
-      this.$router.push('/detail')
+    toDetail (item) {
+      this.$router.push({path: '/detail', query: { activityId: item.activityId, recordId: item.id, userId: item.userId }})
     }
   },
   mounted () {
@@ -157,9 +174,21 @@ export default {
 </script>
 
 <style scope>
+    .time-panel{
+      padding: 10px 0;
+      background-color: white;
+    }
     .sticky{
         z-index: 9;
         background-color: #f7f7f7;
+        margin-bottom: 10px;
+    }
+    .van-count-down{
+      display: inline-block;
+    }
+    .time-label{
+      font-size: 14px;
+      color: #333;
     }
     .data-panel{
       margin-top: 10px;
