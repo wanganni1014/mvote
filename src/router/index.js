@@ -11,6 +11,7 @@ import Search from '@/page/Search'
 import Detail from '@/page/Detail'
 import Introduce from '@/page/Introduce'
 import Rule from '@/page/Rule'
+import MyVideo from '@/page/Mine'
 
 Vue.use(Router)
 
@@ -59,6 +60,11 @@ export default new Router({
     path: '/rule',
     name: 'Rule',
     component: Rule
+  },
+  {
+    path: '/myVideo',
+    name: 'MyVideo',
+    component: MyVideo
   },
   {
     path: '/login',

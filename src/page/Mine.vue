@@ -8,8 +8,30 @@
       @click-left="onClickLeft"
     />
     </van-sticky>
-    <div class="my-works">
-
+    <div class="my-works" v-for="(item, index) in list" :key="index">
+        <van-cell-group>
+            <van-cell :title="item.createTime">
+                <template #right-icon>
+                   <van-tag :type="item.applyStatues === 0 ? 'primary' : item.applyStatues === 1 ? 'success' : 'danger'">{{item.applyStatuesStr}}</van-tag>
+                </template>
+            </van-cell>
+            <van-cell title="">
+                <template #label>
+                    <div class="span-div">
+                        <span class="label">活动: </span>
+                        <span class="value">{{item.activityName}}</span>
+                    </div>
+                    <div class="span-div">
+                        <span class="label">参赛类目: </span>
+                        <span class="value">{{item.oneCategoryName}}{{item.twoCategoryName ? ' / ' + item.twoCategoryName : ''}}</span>
+                    </div>
+                    <div class="span-div" v-if="item.applyRemark">
+                        <span class="label">审核备注: </span>
+                        <span class="value">{{item.applyRemark}}</span>
+                    </div>
+                </template>
+            </van-cell>
+        </van-cell-group>
     </div>
   </div>
 </template>
@@ -17,10 +39,10 @@
 <script>
 import { fetchMyWorks } from '@/request/index'
 export default {
-  name: 'Introduce',
+  name: 'MyVideo',
   data () {
     return {
-      content: ''
+      list: []
     }
   },
   methods: {
@@ -29,19 +51,23 @@ export default {
     }
   },
   mounted () {
-    let userId = localStorage.getItem('userId')
+    let userId = localStorage.getItem('userId') || 761
     fetchMyWorks(userId).then(res => {
-      this.content = res.data.activityIntro
+      this.list = res.data
     })
   }
 }
 </script>
 <style scope>
-.content {
-    background: white;
-    padding: 10px;
-    margin-top: 10px;
-    height: calc(100vh - 60px);
-    text-indent: 28px;
+.my-works {
+    margin: 10px;
+}
+.my-works .span-div{
+    font-size: 14px;
+    color: #333;
+    margin-bottom: 5px;
+}
+.my-works .label {
+    margin-right: 10px;
 }
 </style>

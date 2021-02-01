@@ -96,12 +96,12 @@
         />
         <van-field name="image" label="视频封面" :rules="[{ required: true, message: '请上传视频封面' }]">
             <template #input>
-                <van-uploader v-model="form.image" :max-count="1" :after-read="uploadFile" accept="image/*" />
+                <van-uploader v-model="form.image" :max-count="1" :after-read="uploadImage" accept="image/*" />
             </template>
         </van-field>
         <van-field name="video" label="参赛视频" :rules="[{ required: true, message: '请上传参赛视频' }]">
             <template #input>
-                <van-uploader v-model="form.video" :max-count="1"/>
+                <van-uploader v-model="form.video" :max-count="1" accept="video/*" :after-read="uploadVideo"/>
             </template>
         </van-field>
         <van-field
@@ -138,8 +138,8 @@ export default {
         userAddress: '',
         usserIntro: '',
         userIdCard: '',
-        videoUrl: 'http://pic.studyyoun.com/0023.mp4',
-        videoImage: 'http://jbsc-1.oss-cn-beijing.aliyuncs.com/a67a0c23-531d-4c1d-851f-1c0120d1d38b.png',
+        videoUrl: '',
+        videoImage: '',
         activityId: localStorage.getItem('activityId'),
         oneCategoryId: '',
         oneCategoryTwo: ''
@@ -169,11 +169,21 @@ export default {
         setTimeout(() => {
           this.$router.replace('/index')
         }, 2000)
+      }).catch(err => {
+        this.$toast(err.data.msg)
       })
     },
-    uploadFile (info, key) {
+    uploadImage (info) {
       let forms = new FormData()
       forms.append('file', info.file)
+      this.uploadFile(forms, 'videoImage')
+    },
+    uploadVideo (info) {
+      let forms = new FormData()
+      forms.append('file', info.file)
+      this.uploadFile(forms, 'videoUrl')
+    },
+    uploadFile (forms, key) {
       fetchUpload(forms).then(res => {
         let url = res.data
         this.form[key] = url

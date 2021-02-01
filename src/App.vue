@@ -40,7 +40,7 @@ export default {
     // })
     // let code = this.getCode()
     // console.log(code)
-    fetchLogin('081m6VFa1K5eqA0e0rJa1oJVzF4m6VFw').then(res => {
+    fetchLogin('081efSFa12hxqA0bCXGa1ed7OK3efSFv').then(res => {
       let userInfo = JSON.stringify(res.data)
       localStorage.setItem('userInfo', userInfo)
       localStorage.setItem('userId', res.data.userId)

@@ -45,7 +45,12 @@
         <van-grid :gutter="10" :border="false" :column-num="2">
             <van-grid-item v-for="(item, index) in list" :key="index" @click="toPublish">
                 <div class="custom-grid-item">
-                    <img :src="item.videoImage" alt="">
+                    <van-image
+                      width="100%"
+                      height="100"
+                      fit="contain"
+                      :src="item.videoImage"
+                    />
                     <div class="competitor-info">
                         <div>{{item.userName}}</div>
                         <div class="score">{{item.voteNumber}}票</div>
@@ -66,13 +71,14 @@ import { fetchList, fetchCategory } from '@/request/index'
 import Tabbar from '@/components/Tabbar.vue'
 import NoticeBar from '@/components/NoticeBar.vue'
 import Vue from 'vue'
-import { Swipe, SwipeItem, Lazyload, Empty, Grid, GridItem, Sticky } from 'vant'
+import { Swipe, SwipeItem, Lazyload, Empty, Grid, GridItem, Sticky, Image as VanImage } from 'vant'
 Vue.use(Lazyload)
 Vue.use(Swipe)
 Vue.use(SwipeItem)
 Vue.use(Grid)
 Vue.use(GridItem)
 Vue.use(Sticky)
+Vue.use(VanImage)
 export default {
   name: 'Home',
   components: {Tabbar, NoticeBar, Empty},
@@ -187,11 +193,7 @@ export default {
         margin-top: 12px;
     }
     .custom-grid-item{
-        width: 140px;
-    }
-    .custom-grid-item img{
         width: 100%;
-        height: auto;
     }
     .competitor-info{
         display: flex;

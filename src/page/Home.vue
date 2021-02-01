@@ -48,7 +48,12 @@
         <van-grid :gutter="10" :border="false" :column-num="2">
             <van-grid-item v-for="(item, index) in list" :key="index" @click="toDetail">
                 <div class="custom-grid-item">
-                    <img :src="item.videoImage" alt="参赛封面">
+                    <van-image
+                      width="100%"
+                      height="100"
+                      fit="contain"
+                      :src="item.videoImage"
+                    />
                     <div class="competitor-info">
                         <div>{{item.userName}}</div>
                         <div class="score">{{item.voteNumber}}</div>
@@ -70,13 +75,14 @@ import { fetchActivityInfo, fetchStatics, fetchList, fetchVote } from '@/request
 import Tabbar from '@/components/Tabbar.vue'
 import NoticeBar from '@/components/NoticeBar.vue'
 import Vue from 'vue'
-import { Swipe, SwipeItem, Lazyload, Empty, Grid, GridItem, Sticky } from 'vant'
+import { Swipe, SwipeItem, Lazyload, Empty, Grid, GridItem, Sticky, Image as VanImage } from 'vant'
 Vue.use(Lazyload)
 Vue.use(Swipe)
 Vue.use(SwipeItem)
 Vue.use(Grid)
 Vue.use(GridItem)
 Vue.use(Sticky)
+Vue.use(VanImage)
 export default {
   name: 'Home',
   components: {Tabbar, NoticeBar, Empty},
@@ -177,6 +183,9 @@ export default {
     .swiper{
         height: 200px;
     }
+    .custom-grid-item {
+      width: 100%
+    }
     .swiper img{
         width: 100%;
         height: auto;
@@ -185,10 +194,6 @@ export default {
         background-color: #f7f7f7;
         padding-bottom: 50px;
         margin-top: 12px;
-    }
-    .custom-grid-item img{
-        width: 100%;
-        height: 100px;
     }
     .competitor-info{
         display: flex;
