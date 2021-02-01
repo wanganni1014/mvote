@@ -14,6 +14,11 @@ module.exports = {
       '/toupiao': {
         target:"http://toupiao-api.jinbangshichuang.com/",
         changeOrigin: true,
+      },
+      '/wx': {
+        target: 'https://api.weixin.qq.com',
+        changeOrigin: true,
+        pathRewrite: {'^/wx' : ''}
       }
     },
 
@@ -21,6 +26,7 @@ module.exports = {
     host: 'localhost', // can be overwritten by process.env.HOST
     port: 9999, // can be overwritten by process.env.PORT, if port is in use, a free one will be determined
     autoOpenBrowser: false,
+    host: '192.168.20.52',
     errorOverlay: true,
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-

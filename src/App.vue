@@ -18,19 +18,20 @@ export default {
     }
   },
   mounted () {
-    // fetchWxCode().then(res => {
-    //   let redirectUri = res.split('redirect:')[1]
-    //   this.$nextTick(() => {
-    //     window.location.href = redirectUri
-    //   })
-    // })
-    let code = this.getCode() || '0914F0ll2kiOq64LIFll2Ti8Jh44F0lX'
+    let code = this.getCode()
     if (code) {
       fetchLogin(code).then(res => {
         let userInfo = JSON.stringify(res.data)
         localStorage.setItem('userInfo', userInfo)
         localStorage.setItem('userId', res.data.userId)
         localStorage.setItem('accessToken', res.data.accessToken)
+      })
+    } else {
+      fetchWxCode().then(res => {
+        let redirectUri = res.split('redirect:')[1]
+        this.$nextTick(() => {
+          window.location.href = redirectUri
+        })
       })
     }
   }

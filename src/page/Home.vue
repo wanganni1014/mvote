@@ -123,7 +123,7 @@ export default {
         this.endTime = res.data.endTime
         this.images = res.data.bannerList
         let curr = new Date().getTime()
-        let end = new Date(res.data.endTime).getTime()
+        let end = new Date(res.data.endTime.replace(/-/g, '/')).getTime()
         this.time = end - curr
         this.activityRemark = res.data.activityRemark
       })

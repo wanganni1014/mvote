@@ -11,7 +11,6 @@
   <div class="page-bg">
     <video
       controls="1"
-      autoplay
       :src="detailInfo.videoUrl"
     ></video>
     <div class="detail-title">{{detailInfo.userName}}</div>
@@ -30,8 +29,8 @@
     </van-grid>
     <div class="record">
       <div class="record-item" v-for="(record, index) in list" :key="index">
-        <span>{{record.userName}}给你投票了</span>
-        <span>{{record.createDate}}</span>
+        <span v-if="record">{{record.userName}}给你投票了</span>
+        <span v-if="record">{{record.createDate}}</span>
       </div>
     </div>
     <div class="btn-bg">
@@ -45,6 +44,7 @@
 <script>
 import Vue from 'vue'
 import sha1 from 'sha1'
+import axios from 'axios'
 import { Grid, GridItem, Icon, Button } from 'vant'
 import { fetchDtail, fetchVoteRecord, fetchVote, fetchCommitRead, fetchTicket } from '@/request/index'
 
@@ -58,7 +58,14 @@ export default {
   data () {
     return {
       list: [],
-      detailInfo: {},
+      detailInfo: {
+        videoUrl: '',
+        userName: '',
+        usserIntro: '',
+        voteNumber: '',
+        readCount: '',
+        id: ''
+      },
       isSelf: false
     }
   },
@@ -74,6 +81,7 @@ export default {
       }
       fetchVote(obj).then(res => {
         this.$toast('投票成功')
+        this.detailInfo.voteNumber++
       })
     },
     createNoncestr () {
@@ -134,6 +142,8 @@ export default {
             imgUrl: that.detailInfo.videoImage // 分享图标
           })
         })
+      }).catch(err => {
+        console.log(err)
       })
     }
   },
@@ -152,7 +162,6 @@ export default {
     fetchVoteRecord(recordId).then(res => {
       this.list = res.data.list
     })
-
     this.getShareAuth()
   }
 }
