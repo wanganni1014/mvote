@@ -97,3 +97,11 @@ export function fetchVoteRecord (userId) {
     method: 'get'
   })
 }
+// 增加阅读次数
+export function fetchCommitRead (data) {
+  return request({
+    url: `activity/app//read/save`,
+    method: 'post',
+    data
+  })
+}
