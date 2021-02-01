@@ -93,7 +93,7 @@ export function fetchDtail (recordId, userId, activityId) {
 // 获取投票纪录
 export function fetchVoteRecord (userId) {
   return request({
-    url: `/activity/app//vote/list/${userId}`,
+    url: `/activity/app//vote/list/${userId}?page=1`,
     method: 'get'
   })
 }
@@ -103,5 +103,13 @@ export function fetchCommitRead (data) {
     url: `activity/app//read/save`,
     method: 'post',
     data
+  })
+}
+
+// 获取微信票据
+export function fetchTicket (accessToken) {
+  return request({
+    url: `/wx/cgi-bin/ticket/getticket?access_token=${accessToken}&type=jsapi`,
+    method: 'get'
   })
 }

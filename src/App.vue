@@ -9,19 +9,6 @@ import { fetchWxCode, fetchLogin } from '@/request/index'
 export default {
   name: 'App',
   methods: {
-    getUrl () {
-      // let appID = 'wxb5e37c49945d6ea3'
-      // let redirectUri = encodeURIComponent('http://localhost:8080/#/')
-      // let strUrl =
-      //   'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' +
-      //   appID +
-      //   '&redirect_uri=' +
-      //   redirectUri +
-      //   '%2Foauth_response.php&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
-      // this.$nextTick(() => {
-      //   window.location.href = strUrl
-      // })
-    },
     getCode () {
       let url = window.location.search
       let start = window.location.search.indexOf('=')
@@ -37,13 +24,13 @@ export default {
     //     window.location.href = redirectUri
     //   })
     // })
-    let code = this.getCode()
-    console.log('code-=====', code)
+    let code = this.getCode() || '0914F0ll2kiOq64LIFll2Ti8Jh44F0lX'
     if (code) {
       fetchLogin(code).then(res => {
         let userInfo = JSON.stringify(res.data)
         localStorage.setItem('userInfo', userInfo)
         localStorage.setItem('userId', res.data.userId)
+        localStorage.setItem('accessToken', res.data.accessToken)
       })
     }
   }

@@ -44,8 +44,9 @@
 
 <script>
 import Vue from 'vue'
+import sha1 from 'sha1'
 import { Grid, GridItem, Icon, Button } from 'vant'
-import { fetchDtail, fetchVoteRecord, fetchVote, fetchCommitRead } from '@/request/index'
+import { fetchDtail, fetchVoteRecord, fetchVote, fetchCommitRead, fetchTicket } from '@/request/index'
 
 Vue.use(Grid)
 Vue.use(GridItem)
@@ -74,7 +75,72 @@ export default {
       fetchVote(obj).then(res => {
         this.$toast('投票成功')
       })
+    },
+    createNoncestr () {
+      let str = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'
+      let targetStr = ''
+      for (let i = 0; i < 32; i++) {
+        targetStr += `${str[Math.floor(Math.random() * 32)]}`
+      }
+      return targetStr
+    },
+    createSignature (obj) {
+      let tempStr = ''
+      let keys = Object.keys(obj)
+      keys.sort()
+      for (let i = 0; i < keys.length; i++) {
+        if (i === keys.length - 1) {
+          tempStr += `${keys[i]}=${obj[keys[i]]}`
+        } else {
+          tempStr += `${keys[i]}=${obj[keys[i]]}&`
+        }
+      }
+      let signature = sha1(tempStr)
+      return signature
+    },
+    getShareAuth () {
+      let accessToken = localStorage.getItem('accessToken')
+      let that = this
+      fetchTicket(accessToken).then(res => {
+        let ticket = res.data.ticket
+        let noncestr = this.createNoncestr()
+        let timestamp = Math.floor(new Date().getTime() / 1000)
+        const obj = {
+          noncestr: noncestr,
+          jsapi_ticket: ticket,
+          timestamp: timestamp,
+          url: window.location.href
+        }
+        let signature = this.createSignature(obj)
+        let configObj = {
+          debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+          appId: 'wxb5e37c49945d6ea3', // 必填，公众号的唯一标识
+          timestamp: obj.timestamp, // 必填，生成签名的时间戳
+          nonceStr: obj.noncestr, // 必填，生成签名的随机串
+          signature: signature, // 必填，签名
+          jsApiList: ['updateAppMessageShareData', 'updateTimelineShareData'] // 必填，需要使用的JS接口列表
+        }
+        window.weixin.config(configObj)
+        window.weixin.ready(() => {
+          window.weixin.updateAppMessageShareData({
+            title: '快来帮我投票呀~', // 分享标题
+            desc: '你一票,我一票,大家一起来出道', // 分享描述
+            link: window.location.origin, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: that.detailInfo.videoImage // 分享图标
+          })
+          window.weixin.updateTimelineShareData({
+            title: '快来帮我投票呀~', // 分享标题
+            link: window.location.origin, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            imgUrl: that.detailInfo.videoImage // 分享图标
+          })
+        })
+      })
     }
+  },
+  created () {
+    let {activityId, recordId} = this.$route.query
+    let currUserId = localStorage.getItem('userId')
+    fetchCommitRead({activityId, activityUserId: recordId, voteUserId: currUserId})
   },
   mounted () {
     let {activityId, recordId, userId} = this.$route.query
@@ -86,7 +152,8 @@ export default {
     fetchVoteRecord(recordId).then(res => {
       this.list = res.data.list
     })
-    fetchCommitRead({activityId, recordId, userId: currUserId})
+
+    this.getShareAuth()
   }
 }
 </script>
