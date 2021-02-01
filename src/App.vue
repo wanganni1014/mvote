@@ -23,12 +23,11 @@ export default {
       // })
     },
     getCode () {
-      // let url = window.location.search
-      // let start = window.location.search.indexOf('=')
-      // let end = window.location.search.indexOf('&')
-      // let code = url.substring(start + 1, end)
-      // return code
-
+      let url = window.location.search
+      let start = window.location.search.indexOf('=')
+      let end = window.location.search.indexOf('&')
+      let code = url.substring(start + 1, end)
+      return code
     }
   },
   mounted () {
@@ -38,13 +37,15 @@ export default {
     //     window.location.href = redirectUri
     //   })
     // })
-    // let code = this.getCode()
-    // console.log(code)
-    fetchLogin('081efSFa12hxqA0bCXGa1ed7OK3efSFv').then(res => {
-      let userInfo = JSON.stringify(res.data)
-      localStorage.setItem('userInfo', userInfo)
-      localStorage.setItem('userId', res.data.userId)
-    })
+    let code = this.getCode()
+    console.log('code-=====', code)
+    if (code) {
+      fetchLogin(code).then(res => {
+        let userInfo = JSON.stringify(res.data)
+        localStorage.setItem('userInfo', userInfo)
+        localStorage.setItem('userId', res.data.userId)
+      })
+    }
   }
 }
 </script>

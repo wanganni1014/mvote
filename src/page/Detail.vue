@@ -45,7 +45,7 @@
 <script>
 import Vue from 'vue'
 import { Grid, GridItem, Icon, Button } from 'vant'
-import { fetchDtail, fetchVoteRecord, fetchVote } from '@/request/index'
+import { fetchDtail, fetchVoteRecord, fetchVote, fetchCommitRead } from '@/request/index'
 
 Vue.use(Grid)
 Vue.use(GridItem)
@@ -78,13 +78,15 @@ export default {
   },
   mounted () {
     let {activityId, recordId, userId} = this.$route.query
-    this.isSelf = userId === localStorage.getItem('userId')
+    let currUserId = localStorage.getItem('userId')
+    this.isSelf = userId === currUserId
     fetchDtail(recordId, userId, activityId).then(res => {
       this.detailInfo = res.data
     })
     fetchVoteRecord(recordId).then(res => {
       this.list = res.data.list
     })
+    fetchCommitRead({activityId, recordId, userId: currUserId})
   }
 }
 </script>

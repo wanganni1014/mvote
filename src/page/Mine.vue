@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="mine">
     <van-sticky class="sticky">
         <van-nav-bar
       title="我的作品"
@@ -65,6 +65,10 @@ export default {
 }
 </script>
 <style scope>
+.mine{
+  height: 100vh;
+  overflow: auto;
+}
 .my-works {
     margin: 10px;
 }

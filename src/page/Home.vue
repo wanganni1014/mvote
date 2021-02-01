@@ -140,6 +140,7 @@ export default {
       }
       fetchVote(obj).then(res => {
         this.$toast('投票成功')
+        this.voteNumber++
         this.list[index].voteNumber++
       })
     },

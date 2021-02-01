@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="rule">
     <van-sticky class="sticky">
         <van-nav-bar
       title="活动规则"
@@ -34,7 +34,7 @@ export default {
 }
 </script>
 <style scope>
-.content {
+.rule .content {
     background: white;
     padding: 10px;
     margin-top: 10px;

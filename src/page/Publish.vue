@@ -14,7 +14,11 @@
             v-model="form.userName"
             name="userName"
             label="姓名"
+            rows="1"
+            autosize
+            type="textarea"
             placeholder="请输入姓名"
+            maxlength="50"
             :rules="[{ required: true, message: '请输入姓名' }]"
         />
         <van-field
@@ -23,13 +27,16 @@
             type="tel"
             label="联系方式"
             placeholder="请输入手机号"
-            :rules="[{ required: true, message: '请输入联系方式' }]"
+            maxlength="11"
+            :rules="[
+            { required: true, message: '请输入联系方式' }, {pattern:/^1\d{10}$/, message: '请输入正确格式的手机号'}]"
         />
         <van-field
             v-model="form.userAge"
             name="userAge"
             type="tel"
             label="年龄"
+            maxlength="3"
             placeholder="请输入年龄"
             :rules="[{ required: true, message: '请输入年龄' }]"
         />
@@ -92,7 +99,7 @@
             rows="1"
             autosize
             type="textarea"
-            :rules="[{ required: true, message: '请输入您的身份证号码' }]"
+            :rules="[{ required: true, message: '请输入您的身份证号码' }, {pattern:/(^\d{8}(0\d|10|11|12)([0-2]\d|30|31)\d{3}$)|(^\d{6}(18|19|20)\d{2}(0[1-9]|10|11|12)([0-2]\d|30|31)\d{3}(\d|X|x)$)/, message:'请输入正确的身份证号'}]"
         />
         <van-field name="image" label="视频封面" :rules="[{ required: true, message: '请上传视频封面' }]">
             <template #input>
