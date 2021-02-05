@@ -192,7 +192,7 @@ export default {
     },
     uploadImage (info) {
       this.imageUploading = true
-      this.uploadFile(info, 'videoImage')
+      // this.uploadFile(info, 'videoImage')
     },
     uploadVideo (info) {
       // 获取视频时长
@@ -212,7 +212,7 @@ export default {
         return
       }
       this.videoUploading = true
-      this.uploadFile(info, 'videoUrl')
+      // this.uploadFile(info, 'videoUrl')
     },
     async uploadFile (info, key) {
       info.status = 'uploading'
@@ -297,12 +297,7 @@ export default {
     }
   },
   created () {
-    this.client = new OSS({
-      region: 'oss-cn-beijing',
-      accessKeyId: 'LTAIo6VN4DGGHReI',
-      accessKeySecret: '4apDj4ofdfyUmP3tkTjfjZNwnUvz8V',
-      bucket: 'toupiao22'
-    })
+    // this.client = new OSS()
   },
   mounted () {
     this.getCategory()
