@@ -169,10 +169,11 @@ export default {
 
 <style scope>
 .rank-wrap {
-  background-color: white;
+  /* background-color: white; */
   height: 100vh;
+  overflow: auto;
 }
-.van-sticky{
+.rank-wrap .van-sticky{
   background-color: #f7f7ff;
   padding-bottom: 10px;
 }
@@ -210,6 +211,7 @@ export default {
   padding: 15px 0;
   color: #666;
   text-align: center;
+  background: white;
 }
 
 .list-content {
@@ -217,8 +219,9 @@ export default {
 }
 .rank-item {
   width: 100%;
+  background: white;
   text-align: center;
-  padding: 18px 14px 18px 0;
+  padding: 15px 14px 15px 0;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -237,8 +240,9 @@ export default {
   width: 50px;
 }
 .rank-item .order {
-  width: 80px;
-  text-align: center;
+  width: 180px;
+  text-align: left;
+  margin-left: 10px;
 }
 .rank-item .name {
   flex-grow: 1;

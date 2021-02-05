@@ -1,19 +1,20 @@
 <template>
-<div>
+<div class="detail-warpper">
   <van-sticky class="sticky">
-        <van-nav-bar
-      title="详情"
-      left-text="返回"
-      left-arrow
-      @click-left="onClickLeft"
-    />
+        <van-nav-bar title="详情" left-text="返回" left-arrow @click-left="onClickLeft" @click-right="onClickRight">
+          <template #right>
+            <van-icon name="home-o" size="18" />
+          </template>
+        </van-nav-bar>
     </van-sticky>
   <div class="page-bg">
     <video
       controls="1"
       :src="detailInfo.videoUrl"
+      :poster="detailInfo.videoUrl + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_640,h_400,m_fast'"
     ></video>
     <div class="detail-title">{{detailInfo.userName}}</div>
+    <div class="userId">编号 {{detailInfo.id}}</div>
     <div class="detail-subtitle">{{detailInfo.usserIntro}}</div>
     <van-grid direction="horizontal" :column-num="2" :border="false">
       <van-grid-item class="statistic-icon" :text="detailInfo.voteNumber ? detailInfo.voteNumber + '票' : '0票'">
@@ -29,29 +30,34 @@
     </van-grid>
     <div class="record">
       <div class="record-item" v-for="(record, index) in list" :key="index">
-        <span v-if="record">{{record.userName}}给你投票了</span>
+        <span v-if="record" class="flex-row-center"><span class="ellipsis voteUsername">{{record.userName}}</span><span>给你投票了</span></span>
         <span v-if="record">{{record.createDate}}</span>
       </div>
     </div>
     <div class="btn-bg">
       <van-button class="btn-item" icon="comment-o" round color="#619be7" v-if="!isSelf" @click="toVote(detailInfo.id)">投票</van-button>
-      <van-button class="btn-item" icon="share-o" round color="#619be7">分享</van-button>
+      <van-button class="btn-item" icon="share-o" round color="#619be7" @click="toGuideShare">分享</van-button>
     </div>
   </div>
+  <van-popup v-model="guideShow" :get-container="getContainer">
+    <div class="guide">
+      <img src="@/assets/guide.png" class="one">
+      <img src="@/assets/ok.png" class="ok" @click="guideShow = false">
+    </div>
+  </van-popup>
 </div>
 </template>
 
 <script>
 import Vue from 'vue'
 import sha1 from 'sha1'
-import axios from 'axios'
-import { Grid, GridItem, Icon, Button } from 'vant'
+import { Grid, GridItem, Icon, Popup } from 'vant'
 import { fetchDtail, fetchVoteRecord, fetchVote, fetchCommitRead, fetchTicket } from '@/request/index'
 
 Vue.use(Grid)
 Vue.use(GridItem)
 Vue.use(Icon)
-Vue.use(Button)
+Vue.use(Popup)
 
 export default {
   name: 'Detail',
@@ -64,14 +70,23 @@ export default {
         usserIntro: '',
         voteNumber: '',
         readCount: '',
-        id: ''
+        id: '',
+        videoImage: ''
       },
+      guideShow: false,
       isSelf: false
     }
   },
   methods: {
+    // 返回一个特定的 DOM 节点，作为挂载的父节点
+    getContainer () {
+      return document.querySelector('.detail-warpper')
+    },
     onClickLeft () {
       this.$router.go(-1)
+    },
+    onClickRight () {
+      this.$router.replace('/index')
     },
     toVote (id) {
       let obj = {
@@ -79,7 +94,7 @@ export default {
         activityUserId: id,
         voteUserId: localStorage.getItem('userId')
       }
-      fetchVote(obj).then(res => {
+      fetchVote(obj).then(() => {
         this.$toast('投票成功')
         this.detailInfo.voteNumber++
       })
@@ -106,39 +121,36 @@ export default {
       let signature = sha1(tempStr)
       return signature
     },
+    toGuideShare () {
+      // this.$toast('请点击右上角"..."选择分享')
+      this.guideShow = true
+    },
     getShareAuth () {
-      let accessToken = localStorage.getItem('accessToken')
       let that = this
-      fetchTicket(accessToken).then(res => {
-        let ticket = res.data.ticket
-        let noncestr = this.createNoncestr()
-        let timestamp = Math.floor(new Date().getTime() / 1000)
-        const obj = {
-          noncestr: noncestr,
-          jsapi_ticket: ticket,
-          timestamp: timestamp,
-          url: window.location.href
-        }
-        let signature = this.createSignature(obj)
+      fetchTicket(window.location.href).then(res => {
+        let {appId, nonceStr, timestamp, signature} = res.data
         let configObj = {
-          debug: true, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
-          appId: 'wxb5e37c49945d6ea3', // 必填，公众号的唯一标识
-          timestamp: obj.timestamp, // 必填，生成签名的时间戳
-          nonceStr: obj.noncestr, // 必填，生成签名的随机串
-          signature: signature, // 必填，签名
+          debug: false, // 开启调试模式,调用的所有api的返回值会在客户端alert出来，若要查看传入的参数，可以在pc端打开，参数信息会通过log打出，仅在pc端时才会打印。
+          appId, // 必填，公众号的唯一标识
+          timestamp, // 必填，生成签名的时间戳
+          nonceStr, // 必填，生成签名的随机串
+          signature, // 必填，签名
           jsApiList: ['updateAppMessageShareData', 'updateTimelineShareData'] // 必填，需要使用的JS接口列表
         }
+        let params = window.location.href.split('/detail')[1]
+        let shareUrl = `${window.location.origin}/#/detail${params}`
         window.weixin.config(configObj)
         window.weixin.ready(() => {
           window.weixin.updateAppMessageShareData({
-            title: '快来帮我投票呀~', // 分享标题
-            desc: '你一票,我一票,大家一起来出道', // 分享描述
-            link: window.location.origin, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            title: `我是${that.detailInfo.userName}，我正在参加2021年新疆第一季云健身“运动汇”线上评选活动`, // 分享标题
+            desc: '大手牵小手,健身一起走，动动您发财的小手，快来助我一臂之力吧', // 分享描述
+            link: shareUrl, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: that.detailInfo.videoImage // 分享图标
           })
           window.weixin.updateTimelineShareData({
-            title: '快来帮我投票呀~', // 分享标题
-            link: window.location.origin, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
+            title: `我是${that.detailInfo.userName}，我正在参加2021年新疆第一季云健身“运动汇”线上评选活动`, // 分享标题
+            desc: '大手牵小手,健身一起走，动动您发财的小手，快来助我一臂之力吧', // 分享描述
+            link: shareUrl, // 分享链接，该链接域名或路径必须与当前页面对应的公众号JS安全域名一致
             imgUrl: that.detailInfo.videoImage // 分享图标
           })
         })
@@ -173,6 +185,26 @@ export default {
   padding: 10px;
   box-sizing: border-box;
   color: #333;
+}
+.userId{
+  font-size: 14px;
+  color: #666;
+}
+
+.flex-row-center{
+  display: flex;
+  align-items: center;
+}
+
+.ellipsis{
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+.voteUsername{
+  display: inline-block;
+  max-width: 100px;
+  text-align: left;
 }
 
 video {
@@ -239,5 +271,18 @@ video {
   width: 40vw;
   height: 44px;
   font-size: 16px;
+}
+.detail-warpper .van-popup {
+  background: transparent;
+}
+.guide {
+  text-align: center;
+}
+.guide .one{
+  width: 100vw;
+}
+.guide .ok{
+  width: 60vw;
+  margin-bottom: 30px;
 }
 </style>

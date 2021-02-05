@@ -107,9 +107,10 @@ export function fetchCommitRead (data) {
 }
 
 // 获取微信票据
-export function fetchTicket (accessToken) {
+export function fetchTicket (url) {
   return request({
-    url: `/wx/cgi-bin/ticket/getticket?access_token=${accessToken}&type=jsapi`,
-    method: 'get'
+    url: `/activity/app/wx/ticket`,
+    method: 'post',
+    data: {url}
   })
 }

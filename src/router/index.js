@@ -12,6 +12,7 @@ import Detail from '@/page/Detail'
 import Introduce from '@/page/Introduce'
 import Rule from '@/page/Rule'
 import MyVideo from '@/page/Mine'
+import Example from '@/page/Example'
 
 Vue.use(Router)
 
@@ -70,6 +71,11 @@ export default new Router({
     path: '/login',
     name: 'Login',
     component: Login
+  },
+  {
+    path: '/example',
+    name: 'Example',
+    component: Example
   }
   ]
 })

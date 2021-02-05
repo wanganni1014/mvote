@@ -8,7 +8,7 @@
       @click-left="onClickLeft"
     />
     </van-sticky>
-    <div class="content">{{content}}</div>
+    <div class="content" v-html="content"></div>
   </div>
 </template>
 
@@ -28,7 +28,7 @@ export default {
   },
   mounted () {
     fetchActivityInfo().then(res => {
-      this.content = res.data.activityIntro
+      this.content = res.data.activityIntro.replace(/\n/g, '<br>')
     })
   }
 }

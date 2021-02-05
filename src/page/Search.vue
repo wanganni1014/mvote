@@ -32,35 +32,37 @@
               />
             </van-popup>
     </van-sticky>
-    <van-list
-        v-model="loading"
-        :finished="finished"
-        finished-text="没有更多了"
-        @load="onLoad"
-        class="content"
-        >
-        <empty description="暂时还没有参赛作品" image="search" v-if="!list.length"/>
-        <!-- <van-cell v-else v-for="item in list" :key="item" :title="item" /> -->
-        <van-grid :gutter="10" :border="false" :column-num="2">
-            <van-grid-item v-for="(item, index) in list" :key="index" @click="toDetail(item)">
-                <div class="custom-grid-item">
-                    <van-image
-                      width="100%"
-                      height="100"
-                      fit="contain"
-                      :src="item.videoImage"
-                    />
-                    <div class="competitor-info">
-                        <div>{{item.userName}}</div>
-                        <div class="score">{{item.voteNumber}}票</div>
-                    </div>
-                    <div class="competitor-btn" @click.stop="toVote(item, index)">
-                        <van-button color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="like" round>投票</van-button>
-                    </div>
-                </div>
-            </van-grid-item>
-        </van-grid>
-    </van-list>
+    <div class="search-content">
+      <empty description="暂时还没有参赛作品" image="search" v-if="!list.length"/>
+      <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="onLoad"
+          >
+          <!-- <van-cell v-else v-for="item in list" :key="item" :title="item" /> -->
+          <van-grid :gutter="10" :border="false" :column-num="2">
+              <van-grid-item v-for="(item, index) in list" :key="index" @click="toDetail(item)">
+                  <div class="custom-grid-item">
+                      <van-image
+                        width="100%"
+                        height="100"
+                        fit="cover"
+                        :src="item.videoUrl + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_640,h_400,m_fast'"
+                      />
+                      <div class="competitor-info">
+                          <div class="name">{{item.userName}}</div>
+                          <div class="score" v-if="item.videoType !== 1">{{item.voteNumber}}票</div>
+                      </div>
+                      <div class="competitor-btn">
+                          <div class="userId">编号 {{item.id}}</div>
+                          <van-button color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="like" :disabled="item.videoType === 1" @click.stop="toVote(item, index)">投票</van-button>
+                      </div>
+                  </div>
+              </van-grid-item>
+          </van-grid>
+      </van-list>
+    </div>
     <tabbar />
   </div>
 </template>
@@ -106,6 +108,9 @@ export default {
       this.getList()
     },
     toVote (item, index) {
+      if (item.videoType === 1) {
+        return
+      }
       let obj = {
         activityId: localStorage.getItem('activityId'),
         activityUserId: item.id,
@@ -165,7 +170,17 @@ export default {
       this.$router.push('/publish')
     },
     toDetail (item) {
-      this.$router.push({path: '/detail', query: { activityId: item.activityId, recordId: item.id, userId: item.userId }})
+      if (item.videoType === 1) {
+        let obj = {
+          userName: item.userName,
+          usserIntro: item.usserIntro,
+          videoImage: item.videoImage,
+          videoUrl: item.videoUrl
+        }
+        this.$router.push({path: '/example', query: { info: JSON.stringify(obj) }})
+      } else {
+        this.$router.push({path: '/detail', query: { activityId: item.activityId, recordId: item.id, userId: item.userId }})
+      }
     },
     onFinish ({ selectedOptions }) {
       this.show = false
@@ -196,10 +211,14 @@ export default {
         width: 100%;
         height: auto;
     }
-    .content{
+    .userId{
+      font-size: 14px;
+      color: #666;
+    }
+    .search-content{
         background-color: #f7f7f7;
         padding-bottom: 50px;
-        margin-top: 12px;
+        margin-top: 10px;
     }
     .custom-grid-item{
         width: 100%;
@@ -211,9 +230,15 @@ export default {
     .competitor-btn{
         margin-top: 8px;
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
     }
     .competitor-info .score{
         color: red;
+    }
+    .competitor-info .name{
+      max-width: 6rem;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
 </style>

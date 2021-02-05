@@ -101,7 +101,12 @@
             type="textarea"
             :rules="[{ required: true, message: '请输入您的身份证号码' }, {pattern:/(^\d{8}(0\d|10|11|12)([0-2]\d|30|31)\d{3}$)|(^\d{6}(18|19|20)\d{2}(0[1-9]|10|11|12)([0-2]\d|30|31)\d{3}(\d|X|x)$)/, message:'请输入正确的身份证号'}]"
         />
-        <van-field name="image" label="视频封面" :rules="[{ required: true, message: '请上传视频封面' }]">
+        <!-- <van-field name="image" label="视频封面" :rules="[{ required: true, message: '请上传视频封面' }]">
+            <template #input>
+                <van-uploader v-model="form.image" :max-count="1" :after-read="uploadImage" accept="image/*" />
+            </template>
+        </van-field> -->
+        <van-field name="image" label="身份证照片" :rules="[{ required: true, message: '请上传身份证照片' }]">
             <template #input>
                 <van-uploader v-model="form.image" :max-count="1" :after-read="uploadImage" accept="image/*" />
             </template>
@@ -132,7 +137,8 @@
 <script>
 import Vue from 'vue'
 import { Uploader } from 'vant'
-import { fetchCategory, fetchApply, fetchUpload } from '@/request/index'
+import OSS from 'ali-oss'
+import { fetchCategory, fetchApply } from '@/request/index'
 Vue.use(Uploader)
 export default {
   name: 'Publish',
@@ -151,6 +157,8 @@ export default {
         oneCategoryId: '',
         oneCategoryTwo: ''
       },
+      videoUploading: false,
+      imageUploading: false,
       pickerValue: '',
       fieldNames: {
         text: 'activityCategoryName',
@@ -166,6 +174,10 @@ export default {
       this.$router.go(-1)
     },
     onSubmit () {
+      if (this.imageUploading || this.videoUploading) {
+        this.$toast('请等待资源文件上传完成')
+        return
+      }
       let data = this.form
       let userId = localStorage.getItem('userId')
       data.userId = userId
@@ -179,36 +191,83 @@ export default {
       })
     },
     uploadImage (info) {
-      let forms = new FormData()
-      forms.append('file', info.file)
-      this.uploadFile(forms, 'videoImage')
+      this.imageUploading = true
+      this.uploadFile(info, 'videoImage')
     },
     uploadVideo (info) {
-      let forms = new FormData()
-      console.log(info)
       // 获取视频时长
-      var url = URL.createObjectURL(info.file)
-      var audioElement = new Audio(url)
-      audioElement.addEventListener('loadedmetadata', (_event) => {
-        this.audioDuration = parseInt(audioElement.duration)
-        console.log(this.audioDuration)
-      })
-      forms.append('file', info.file)
-      this.uploadFile(forms, 'videoUrl')
+      // var url = URL.createObjectURL(info.file)
+      // var audioElement = new Audio(url)
+      // audioElement.addEventListener('loadedmetadata', (_event) => {
+      //   let audioDuration = parseInt(audioElement.duration)
+      //   console.log(audioDuration)
+      // })
+
+      // 获取视频大小
+      let size = info.file.size
+      let MB = (size / 1024 / 1024).toFixed(2)
+      if (MB > 150) {
+        this.$toast('视频大小不能超过150MB,请重新上传')
+        this.form.video = []
+        return
+      }
+      this.videoUploading = true
+      this.uploadFile(info, 'videoUrl')
     },
-    uploadFile (forms, key) {
-      fetchUpload(forms).then(res => {
-        let url = res.data
-        this.form[key] = url
-      }).catch(() => {
+    async uploadFile (info, key) {
+      info.status = 'uploading'
+      info.message = '上传中...'
+      let forms = new FormData()
+      forms.append('file', info.file)
+      let fileName = `${new Date().getTime()}_${info.file.name}`
+      try {
+        await this.client.put(fileName, info.file)
+        this.form[key] = 'http://toupiao.sxyundun.com/' + fileName
+        console.log(this.form[key])
+        info.status = 'done'
+        info.message = ''
         if (key === 'videoImage') {
-          this.$toast('视频封面上传失败,请重试')
+          this.imageUploading = false
+        } else {
+          this.videoUploading = false
+        }
+      } catch (e) {
+        info.status = 'failed'
+        info.message = '上传失败'
+        if (key === 'videoImage') {
+          this.$toast('身份证照片上传失败,请重试')
           this.form.image = []
+          this.imageUploading = false
         } else {
           this.$toast('视频文件上传失败,请重试')
           this.form.video = []
+          this.videoUploading = false
         }
-      })
+        console.log(e)
+      }
+      // fetchUpload(forms).then(res => {
+      //   info.status = 'done'
+      //   info.message = ''
+      //   let url = res.data
+      //   this.form[key] = url
+      //   if (key === 'videoImage') {
+      //     this.imageUploading = false
+      //   } else {
+      //     this.videoUploading = false
+      //   }
+      // }).catch((err) => {
+      //   info.status = 'failed'
+      //   info.message = '上传失败'
+      //   if (key === 'videoImage') {
+      //     this.$toast(err.data.msg || '视频封面上传失败,请重试')
+      //     this.form.image = []
+      //     this.imageUploading = false
+      //   } else {
+      //     this.$toast(err.data.msg || '视频文件上传失败,请重试')
+      //     this.form.video = []
+      //     this.videoUploading = false
+      //   }
+      // })
     },
     getCategory () {
       fetchCategory().then(res => {
@@ -237,6 +296,14 @@ export default {
       this.form.oneCategoryTwo = categoryId[1] || ''
     }
   },
+  created () {
+    this.client = new OSS({
+      region: 'oss-cn-beijing',
+      accessKeyId: 'LTAIo6VN4DGGHReI',
+      accessKeySecret: '4apDj4ofdfyUmP3tkTjfjZNwnUvz8V',
+      bucket: 'toupiao22'
+    })
+  },
   mounted () {
     this.getCategory()
   }
@@ -246,14 +313,6 @@ export default {
 .publish-wrap{
     height: 100vh;
     overflow: auto;
-    /* background: linear-gradient(45deg, palegoldenrod, pink, plum); */
-    /* animation: hueRotate 10s infinite alternate; */
-}
-@keyframes hueRotate {
-    100% {
-        /* hue-rotate(deg): 给图像应用色相旋转,deg设定图像会被调整的色环角度值 */
-        filter: hue-rotate(360deg);
-    }
 }
 .form-wrap{
     width: 90%;

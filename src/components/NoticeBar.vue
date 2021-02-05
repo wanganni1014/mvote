@@ -4,6 +4,7 @@
         left-icon="volume-o"
         scrollable
         :text="msg"
+        color="#1989fa" background="#ecf9ff"
     />
   </div>
 </template>

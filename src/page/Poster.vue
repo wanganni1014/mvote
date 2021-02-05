@@ -1,5 +1,7 @@
 <template>
-  <img :src="postUrl" alt="" class="poster" @click="goIndex">
+  <div class="poster-wapper">
+    <img :src="postUrl" alt="" class="poster" @click="goIndex">
+  </div>
 </template>
 
 <script>
@@ -26,8 +28,11 @@ export default {
 </script>
 
 <style>
-.poster{
-    width: 100%;
+.poster-wapper{
+  font-size: 0;
+}
+.poster-wapper .poster{
+    width: 100vw;
     height: auto;
 }
 </style>

@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { fetchWxCode, fetchLogin } from '@/request/index'
+import { fetchLogin } from '@/request/index'
 export default {
   name: 'App',
   methods: {
@@ -15,10 +15,19 @@ export default {
       let end = window.location.search.indexOf('&')
       let code = url.substring(start + 1, end)
       return code
+    },
+    getUrl () {
+      let appID = 'wxb5e37c49945d6ea3'
+      let url = window.location.href
+      let redirectUri = encodeURIComponent(url.replace('http://192.168.20.52:9999', 'http://toupiao-api.jinbangshichuang.com'))
+      let strUrl = 'https://open.weixin.qq.com/connect/oauth2/authorize?appid=' + appID + '&redirect_uri=' + redirectUri + '&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect'
+      this.$nextTick(() => {
+        window.location.href = strUrl
+      })
     }
   },
   mounted () {
-    let code = this.getCode()
+    let code = this.getCode() || '031qR10w3GrrMV2qdu2w3bE3rT2qR10q'
     if (code) {
       fetchLogin(code).then(res => {
         let userInfo = JSON.stringify(res.data)
@@ -27,12 +36,13 @@ export default {
         localStorage.setItem('accessToken', res.data.accessToken)
       })
     } else {
-      fetchWxCode().then(res => {
-        let redirectUri = res.split('redirect:')[1]
-        this.$nextTick(() => {
-          window.location.href = redirectUri
-        })
-      })
+      this.getUrl()
+      // fetchWxCode().then(res => {
+      //   let redirectUri = res.split('redirect:')[1]
+      //   this.$nextTick(() => {
+      //     window.location.href = redirectUri
+      //   })
+      // })
     }
   }
 }
@@ -49,5 +59,8 @@ export default {
   /* text-align: center; */
   background-color: #f7f7f7;
   height: 100vh;
+}
+.van-grid-item__content{
+  padding: 8px !important;
 }
 </style>

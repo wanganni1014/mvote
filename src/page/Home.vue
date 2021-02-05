@@ -1,13 +1,11 @@
 <template>
   <div>
-    <van-sticky class="sticky">
-        <van-swipe :autoplay="3000" class="swiper">
-            <van-swipe-item v-for="(image, index) in images" :key="index">
-                <img v-lazy="image" @click="toPublish"/>
-            </van-swipe-item>
-        </van-swipe>
+    <van-swipe :autoplay="3000" class="swiper">
+        <van-swipe-item v-for="(image, index) in images" :key="index">
+            <img v-lazy="image" @click="toPublish"/>
+        </van-swipe-item>
+    </van-swipe>
     <notice-bar :msg="activityRemark"/>
-    </van-sticky>
     <!-- <van-row type="flex" justify="space-around" class="data-panel">
       <van-col span="6" type="flex" justify="center">
         <van-row class="up">6</van-row>
@@ -31,7 +29,7 @@
         <van-row>
           <span class="time-label">活动时间: {{startTime}} - {{endTime}}</span>
         </van-row>
-    </van-col>
+      </van-col>
     </van-row>
     <van-row class="data-panel">
       <van-col span="8" type="flex" justify="center" align="center">
@@ -48,37 +46,40 @@
       </van-col>
     </van-row>
 
-    <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-      <van-list
-        v-model="loading"
-        :finished="finished"
-        finished-text="没有更多了"
-        @load="onLoad"
-        class="content"
-        >
-        <empty description="暂时还没有参赛作品" image="search" v-if="!list.length"/>
-        <van-grid :gutter="10" :border="false" :column-num="2">
-            <van-grid-item v-for="(item, index) in list" :key="index" @click="toDetail(item)">
-                <div class="custom-grid-item">
-                    <van-image
-                      width="100%"
-                      height="100"
-                      fit="contain"
-                      :src="item.videoImage"
-                    />
-                    <div class="competitor-info">
-                        <div>{{item.userName}}</div>
-                        <div class="score">{{item.voteNumber}}</div>
-                    </div>
-                    <div class="competitor-btn" @click.stop="toVote(item, index)">
-                        <van-button color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="like" round>投票</van-button>
-                        <!-- <van-button disabled color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="good-job" round>已投</van-button> -->
-                    </div>
-                </div>
-            </van-grid-item>
-        </van-grid>
+    <div class="content">
+      <empty description="暂时还没有参赛作品" image="search" v-if="!list.length"/>
+      <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+        <van-list
+          v-model="loading"
+          :finished="finished"
+          finished-text="没有更多了"
+          @load="onLoad"
+          >
+          <van-grid :gutter="10" :border="false" :column-num="2">
+              <van-grid-item v-for="(item, index) in list" :key="index" @click="toDetail(item)">
+                  <div class="custom-grid-item">
+                      <van-image
+                        width="100%"
+                        height="100"
+                        fit="cover"
+                        :src="item.videoUrl + '?x-oss-process=video/snapshot,t_7000,f_jpg,w_640,h_400,m_fast'"
+                      />
+                      <div class="competitor-info">
+                          <div class="name">{{item.userName}}</div>
+                          <div class="score">{{item.voteNumber}}票</div>
+                      </div>
+                      <div class="competitor-btn">
+                          <div class="userId">编号 {{item.id}}</div>
+                          <van-button color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="like" @click.stop="toVote(item, index)">投票</van-button>
+                          <!-- <van-button disabled color="linear-gradient(to right, #ff6034, #ee0a24)" size="mini" icon="good-job" round>已投</van-button> -->
+                      </div>
+                  </div>
+              </van-grid-item>
+          </van-grid>
         </van-list>
-    </van-pull-refresh>
+      </van-pull-refresh>
+    </div>
+    <van-row type="flex" align="center" justify="center" class="sign-btn" @click="toPublish"><img src="@/assets/sign.png" alt=""></van-row>
     <tabbar />
   </div>
 </template>
@@ -156,7 +157,6 @@ export default {
         this.loading = false
         let list = res.data.list
         this.list = this.currPage === 1 ? list : this.list.concat(list)
-        this.currPage++
         if (this.currPage < res.data.totalPage) {
           this.currPage++
         } else {
@@ -188,14 +188,25 @@ export default {
 </script>
 
 <style scope>
+    .sign-btn{
+      position: absolute;
+      top: 8rem;
+    }
+    .sign-btn img{
+      width: 40%;
+    }
+    .userId{
+      font-size: 14px;
+      color: #666;
+    }
     .time-panel{
       padding: 10px 0;
       background-color: white;
+      margin-top: 10px;
     }
     .sticky{
         z-index: 9;
         background-color: #f7f7f7;
-        margin-bottom: 10px;
     }
     .van-count-down{
       display: inline-block;
@@ -205,8 +216,7 @@ export default {
       color: #333;
     }
     .data-panel{
-      margin-top: 10px;
-      margin: 10px auto 0 10px;
+      margin: 10px auto 0 auto;
       width: 96%;
       background-image: linear-gradient(to bottom right, #619be7 , #663cca);
       padding: 10px;
@@ -245,9 +255,15 @@ export default {
     .competitor-btn{
         margin-top: 8px;
         display: flex;
-        justify-content: flex-end;
+        justify-content: space-between;
     }
     .competitor-info .score{
         color: red;
+    }
+    .competitor-info .name{
+      max-width: 6rem;
+      text-overflow: ellipsis;
+      overflow: hidden;
+      white-space: nowrap;
     }
 </style>

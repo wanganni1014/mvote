@@ -2,11 +2,9 @@ import axios from 'axios'
 import { Toast } from 'vant'
 
 // create an axios instance
-console.log(process.env.BASE_URL)
-
 const service = axios.create({
   baseURL: process.env.BASE_URL,
-  timeout: 50000 // request timeout
+  timeout: 500000 // request timeout
 })
 
 // request interceptor
